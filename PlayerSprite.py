@@ -11,6 +11,11 @@ from os import path
 # IMAGES AND SOUNDS are dictionaries
 # IMAGES= { "BSE_IMG" : vegeta_img ,...
 # SOUNDS = { "KI" : ki_sound,...
+path = "Sound/jump.mp3"
+
+def play_music(music_file):
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.play()
 
 
 class PlayerSpr(pygame.sprite.Sprite):
@@ -61,6 +66,8 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.allsprGRP = GROUPS["ALL_SPRITES"]
         self.bulletGRP = GROUPS["BULLETS"]
         self.specialsGRP = GROUPS["SPECIALS"]
+
+
 
     def get_damage(self, amount):
         # change image to vegeta_damage if he is not blocking
@@ -169,11 +176,15 @@ class PlayerSpr(pygame.sprite.Sprite):
 
         self.allsprGRP.add(bullet)
         self.bulletGRP.add(bullet)
+        #wait 1 second before returning to base image
+
 
     # create a function to fly up
     def fly_up(self):
-        # play flying_sound
-        self.flying_sound.play()
+
+
+        # play flying_sound by using the playmusic function
+
         # change image to vegeta_fly_up
         self.image = self.fly_up_img
         # remove black background on image
@@ -187,7 +198,7 @@ class PlayerSpr(pygame.sprite.Sprite):
     # create a function to fly down
     def fly_down(self):
         # play flying_sound
-        self.flying_sound.play()
+
         # change image to vegeta_fly_down only if player2 is not on the floor
         if self.rect.bottom != self.height - 10:
             self.image = self.fly_down_img
@@ -199,7 +210,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         # else if player2 is on the floor, play landing sound
         else:
             #stop flying_sound
-            self.flying_sound.stop()
+           # self.flying_sound.stop()
             self.landing_sound.play()
             self.image = self.base_img
 
@@ -329,4 +340,8 @@ class PlayerSpr(pygame.sprite.Sprite):
 
         self.allsprGRP.add(sp_attack)
         self.specialsGRP.add(sp_attack)
+
+#create a function that plays music files
+
+
 

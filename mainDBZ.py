@@ -10,6 +10,7 @@ from os import path
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'Sound')
 vid_dir = path.join(path.dirname(__file__), 'vid')
+mus_dir = path.join(path.dirname(__file__), 'Music')
 # create vegeta_dir under img_dir
 vegeta_dir = path.join(img_dir, 'vegeta')
 # create goku_dir under img_dir
@@ -32,136 +33,6 @@ pygame.mixer.init(44100, -16, 2, 2048) # (frequency, size, channels, buffer)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("DBZ")
 clock = pygame.time.Clock()
-
-
-# create abstract class for a sprite
-
-
-# class Player1(pygame.sprite.Sprite):
-#     # create timer variable
-#
-#     def __init__(self):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = player1_img
-#         self.image.set_colorkey(BLACK)  # black background
-#         self.rect = self.image.get_rect()
-#         self.rect.centerx = WIDTH - 460
-#         self.rect.bottom = HEIGHT - 10
-#         self.speedx = 0
-#         self.current_health = 200
-#         self.target_health = 500
-#         self.maximum_health = 1000
-#         self.health_bar_length = 300
-#         self.health_ratio = self.maximum_health / self.health_bar_length
-#         self.health_change_speed = 5
-#
-#     def get_damage(self, amount):
-#         if self.target_health > 0:
-#             self.target_health -= amount
-#         if self.target_health <= 0:
-#             self.target_health = 0
-#
-#     def get_health(self, amount):
-#         if self.target_health > self.maximum_health:
-#             self.target_health -= amount
-#         if self.target_health >= self.maximum_health:
-#             self.target_health = self.maximum_health
-#
-#     def basic_health(self):
-#         pygame.draw.rect(screen, (255, 0, 0), (10, 10, self.target_health / self.health_ratio, 25))
-#         pygame.draw.rect(screen, (255, 255, 255), (10, 10, self.health_bar_length, 25), 4)
-#         # update screen
-#         pygame.display.flip()
-#
-#     def update(self):
-#         self.advance_health()
-#         self.speedx = 0
-#         keystate = pygame.key.get_pressed()
-#         if keystate[pygame.K_a]:
-#             self.speedx = -5
-#         if keystate[pygame.K_d]:
-#             self.speedx = 5
-#         self.rect.x += self.speedx
-#         # make player fly up and down
-#         if keystate[pygame.K_w]:
-#             self.fly_up()
-#         if keystate[pygame.K_s]:
-#             self.fly_down()
-#         if self.rect.right > WIDTH:
-#             self.rect.right = WIDTH
-#         if self.rect.left < 0:
-#             self.rect.left = 0
-#         if self.rect.top < 0:
-#             self.rect.top = 0
-#         if self.rect.bottom > HEIGHT:
-#             self.rect.bottom = HEIGHT
-#
-#     def advance_health(self):
-#         transition_width = 0
-#         transition_color = (255, 0, 0)
-#
-#         if self.current_health < self.target_health:
-#             self.current_health += self.health_change_speed
-#             transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-#             transition_color = (0, 255, 0)
-#         if self.current_health < self.target_health:
-#             self.current_health -= self.health_change_speed
-#             transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-#             transition_color = (255, 255, 0)
-#
-#         health_bar_rect = pygame.Rect(10, 45, self.current_health / self.health_ratio, 25)
-#         transition_bar_rect = pygame.Rect(health_bar_rect.right, 45, transition_width, 25)
-#
-#         pygame.draw.rect(screen, (255, 0, 0), health_bar_rect)
-#         pygame.draw.rect(screen, transition_color, transition_bar_rect)
-#         pygame.draw.rect(screen, (255, 255, 255), (10, 45, self.health_bar_length, 25), 4)
-#
-#     def shoot(self):
-#         ki_sound.play()
-#         bullet = Bullet(self.rect.centerx, self.rect.top, 1)
-#         all_sprites.add(bullet)
-#         bullets.add(bullet)
-#
-#     # create a function to fly up
-#     def fly_up(self):
-#         self.rect.y -= 5
-#         if self.rect.y < 0:
-#             self.rect.y = 0
-#
-#     # create a function to fly down
-#     def fly_down(self):
-#         self.rect.y += 5
-#         if self.rect.y > HEIGHT:
-#             self.rect.y = HEIGHT
-#
-#         # def kamehamehaBlast(self):
-#         # create a function for kamehameaBlast
-#
-#     def kamehamehaBlast(self):
-#         #
-#         # dim the screen
-#
-#         pygame.display.flip()
-#         # time.sleep(5)
-#         # play goku_SP_MP4
-#         goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
-#         goku_SP_MP4.preview()
-#         # set screen to original size
-#         screen = pygame.display.set_mode((WIDTH, HEIGHT))
-#         pygame.display.flip()
-#         # time.sleep(5)
-#         # wait 30 seconds before playing the sound again
-#
-#         kamehameha = Kamehameha(self.rect.centerx, self.rect.top, 1)
-#         all_sprites.add(kamehameha)
-#         kamehamehas.add(kamehameha)
-#
-#     # create a function to hold player1 in place
-#     def hold(self):
-#         self.rect.y += 5
-#         if self.rect.y > HEIGHT:
-#             self.rect.y = HEIGHT
-
 
 
 
@@ -375,7 +246,10 @@ kamehameha_sound = pygame.mixer.Sound(path.join(snd_dir, 'kamehameha.mp3'))
 ki_sound = pygame.mixer.Sound(path.join(snd_dir, 'ki_blast3.mp3'))
 landing_sound = pygame.mixer.Sound(path.join(snd_dir, 'landing.mp3'))
 vegeta_trans_sound = pygame.mixer.Sound(path.join(snd_dir, 'vegeta_transform.mp3'))
-flying_sound = pygame.mixer.Sound(path.join(snd_dir, "jump.mp3"))
+flying_sound = pygame.mixer.music.load(path.join(snd_dir, "jump.mp3"))
+
+#load background music
+bg_music = pygame.mixer.music.load(path.join(mus_dir, "bgmusic.mp3"))
 
 SOUNDS = {
     "KI": ki_sound,
@@ -416,7 +290,8 @@ all_sprites.add(player2)
 
 # Game Loop
 running = True
-
+#start background music
+pygame.mixer.music.play(-1)
 while running:
     # keep loop running at the right speed
     clock.tick(FPS)
@@ -493,5 +368,6 @@ while running:
 
     # *after* drawing everything, flip the display
     pygame.display.flip()
-
+#stop background music
+pygame.mixer.music.stop()
 pygame.quit()
