@@ -29,15 +29,13 @@ YELLOW = (255, 255, 0)
 
 # initialize pygame and create window
 pygame.init()
-pygame.mixer.init(44100, -16, 2, 2048) # (frequency, size, channels, buffer)
+pygame.mixer.init(44100, -16, 2, 2048)  # (frequency, size, channels, buffer)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("DBZ")
 clock = pygame.time.Clock()
 
 
-
-
-class Rock(pygame.sprite.Sprite ):
+class Rock(pygame.sprite.Sprite):
     def __init__(self, img_rck):
         pygame.sprite.Sprite.__init__(self)
         self.image = img_rck
@@ -122,10 +120,13 @@ class Kamehameha(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-#create a function that will return a return random rock image
+
+# create a function that will return a return random rock image
 def get_random_rock_img():
     rock_img = random.choice(rock_images)
     return rock_img
+
+
 # Load all game graphics
 background = pygame.image.load(path.join(img_dir, "namek.png")).convert()
 background_rect = background.get_rect()
@@ -140,7 +141,7 @@ kamehameha3_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball3.png
 kamehameha4_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball4.png")).convert()
 kamehameha5_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball5.png")).convert()
 
-KAMEHAMEHA_FIREBALLS = [kamehameha_img,kamehameha2_img,kamehameha3_img,kamehameha4_img,kamehameha5_img]
+KAMEHAMEHA_FIREBALLS = [kamehameha_img, kamehameha2_img, kamehameha3_img, kamehameha4_img, kamehameha5_img]
 
 vegeta_fly_up = pygame.image.load(path.join(vegeta_dir, "vegeta_fly_up.png")).convert()
 vegeta_block = pygame.image.load(path.join(vegeta_dir, "vegeta_block.png")).convert()
@@ -171,16 +172,13 @@ goku_ki = pygame.image.load(path.join(goku_dir, "goku_ki.png")).convert()
 goku_sp1 = pygame.image.load(path.join(goku_dir, "gokusp1.png")).convert()
 goku_sp2 = pygame.image.load(path.join(goku_dir, "gokusp2.png")).convert()
 
-
-
-
 # Load all videos
 goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
 
-#create a dictionary of VIDEOS
+# create a dictionary of VIDEOS
 VIDEOS = {'gokuSP': goku_SP_MP4}
 rock_images = [rock_img, rock2_img, rock3_img]
-#create a dictionary of IMAGES for goku
+# create a dictionary of IMAGES for goku
 IMAGES_G = {
     "BSE_IMG": player1_img,
     "KAMEHAMEHA": kamehameha_img,
@@ -203,12 +201,11 @@ IMAGES_G = {
     "ROCK": rock_images,
     "SP_ATTACK": KAMEHAMEHA_FIREBALLS,
 
-
 }
 
-#create a list of rock images
+# create a list of rock images
 
-#create a dictionary for player1
+# create a dictionary for player1
 IMAGES_P2 = {
     "BSE_IMG": player2_img,
     "rain": rain_img,
@@ -232,11 +229,7 @@ IMAGES_P2 = {
     "SP_ATTACK": goku_sp1,
 
 }
-#create a dictionary for VIDS
-
-
-
-
+# create a dictionary for VIDS
 
 
 # Load all videos
@@ -248,7 +241,7 @@ landing_sound = pygame.mixer.Sound(path.join(snd_dir, 'landing.mp3'))
 vegeta_trans_sound = pygame.mixer.Sound(path.join(snd_dir, 'vegeta_transform.mp3'))
 flying_sound = pygame.mixer.music.load(path.join(snd_dir, "jump.mp3"))
 
-#load background music
+# load background music
 bg_music = pygame.mixer.music.load(path.join(mus_dir, "bgmusic.mp3"))
 
 SOUNDS = {
@@ -261,13 +254,11 @@ SOUNDS = {
 # create all groups
 
 
-
 all_sprites = pygame.sprite.Group()
 rocks = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 kamehamehas = pygame.sprite.Group()
 lightnings = pygame.sprite.Group()
-
 
 GROUPS = {
     "ALL_SPRITES": all_sprites,
@@ -276,10 +267,10 @@ GROUPS = {
     "SPECIALS": kamehamehas,
 }
 
-#add
-player1 = PlayerSpr("Player1",screen, HEIGHT, WIDTH, IMAGES_G, SOUNDS, VIDEOS, WIDTH - 1000, HEIGHT, GROUPS)
+# add
+player1 = PlayerSpr("Player1", screen, HEIGHT, WIDTH, IMAGES_G, SOUNDS, VIDEOS, WIDTH - 1000, HEIGHT, GROUPS)
 
-player2 = PlayerSpr("Player2",screen, HEIGHT, WIDTH, IMAGES_P2, SOUNDS, VIDEOS,WIDTH, HEIGHT, GROUPS)
+player2 = PlayerSpr("Player2", screen, HEIGHT, WIDTH, IMAGES_P2, SOUNDS, VIDEOS, WIDTH, HEIGHT, GROUPS)
 all_sprites.add(player1)
 all_sprites.add(player2)
 
@@ -290,7 +281,7 @@ all_sprites.add(player2)
 
 # Game Loop
 running = True
-#start background music
+# start background music
 pygame.mixer.music.play(-1)
 while running:
     # keep loop running at the right speed
@@ -352,7 +343,6 @@ while running:
         else:
             player1.get_damage(5)
 
-
     hits2 = pygame.sprite.spritecollide(player2, bullets, False)
     if hits2:
         if player2.blocking:
@@ -368,6 +358,6 @@ while running:
 
     # *after* drawing everything, flip the display
     pygame.display.flip()
-#stop background music
+# stop background music
 pygame.mixer.music.stop()
 pygame.quit()

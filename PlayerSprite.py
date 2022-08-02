@@ -6,12 +6,14 @@ from Attacks import Bullet, Special_Attack
 from moviepy.editor import *
 from os import path
 
-
 # this is a class for player sprite object.
 # IMAGES AND SOUNDS are dictionaries
 # IMAGES= { "BSE_IMG" : vegeta_img ,...
 # SOUNDS = { "KI" : ki_sound,...
+# from mainDBZ import Lightning_Bolt, lightnings
+
 path = "Sound/jump.mp3"
+
 
 def play_music(music_file):
     pygame.mixer.music.load(music_file)
@@ -66,8 +68,6 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.allsprGRP = GROUPS["ALL_SPRITES"]
         self.bulletGRP = GROUPS["BULLETS"]
         self.specialsGRP = GROUPS["SPECIALS"]
-
-
 
     def get_damage(self, amount):
         # change image to vegeta_damage if he is not blocking
@@ -176,12 +176,10 @@ class PlayerSpr(pygame.sprite.Sprite):
 
         self.allsprGRP.add(bullet)
         self.bulletGRP.add(bullet)
-        #wait 1 second before returning to base image
-
+        # wait 1 second before returning to base image
 
     # create a function to fly up
     def fly_up(self):
-
 
         # play flying_sound by using the playmusic function
 
@@ -192,8 +190,6 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.rect.y -= 5
         if self.rect.y < 0:
             self.rect.y = 0
-
-
 
     # create a function to fly down
     def fly_down(self):
@@ -209,8 +205,8 @@ class PlayerSpr(pygame.sprite.Sprite):
 
         # else if player2 is on the floor, play landing sound
         else:
-            #stop flying_sound
-           # self.flying_sound.stop()
+            # stop flying_sound
+            # self.flying_sound.stop()
             self.landing_sound.play()
             self.image = self.base_img
 
@@ -241,14 +237,12 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.image = self.block_img
         self.image.set_colorkey(self.BLACK)
 
-
     def unblock(self):
         self.blocking = False
         self.image = self.image
 
-# create a funtion to transform super saiyen into vegeta
+    # create a funtion to transform super saiyen into vegeta
     def transform(self):
-
 
         self.trans_sound.play()
         # make background  flicker while transforming
@@ -306,9 +300,9 @@ class PlayerSpr(pygame.sprite.Sprite):
         pygame.display.flip()
         time.sleep(2)
 
-        # draw lightning bolt
-        # lightning_bolt = Lightning_Bolt(WIDTH - 400, HEIGHT, 1)
-        # all_sprites.add(lightning_bolt)
+        # # draw lightning bolt
+        # lightning_bolt = Lightning_Bolt(self.width - 400, self.height, 1)
+        # self.allsprGRP.add(lightning_bolt)
         # lightnings.add(lightning_bolt)
 
         # change images to vegeta_ssj1 through vegeta_ssj6
@@ -325,13 +319,11 @@ class PlayerSpr(pygame.sprite.Sprite):
         #
         # dim the screen
 
-
         # time.sleep(5)
         # play goku_SP_MP4
-        #goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
-        #goku_SP_MP4.preview()
+        # goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
+        # goku_SP_MP4.preview()
         # set screen to original size
-
 
         # time.sleep(5)
         # wait 30 seconds before playing the sound again
@@ -341,7 +333,4 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.allsprGRP.add(sp_attack)
         self.specialsGRP.add(sp_attack)
 
-#create a function that plays music files
-
-
-
+# create a function that plays music files
