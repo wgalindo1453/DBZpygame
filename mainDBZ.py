@@ -1,11 +1,16 @@
 import pygame
 import random
 from PlayerSprite import PlayerSpr
-
+from dimmer import Dimmer
 import threading
 import time
+import spritesheet
 from moviepy.editor import *
 from os import path
+from ObjectSprite import Rock
+
+# show vegeta transform image on flip with a black background
+# ss = SpriteSheet('img/vegeta/vegetaspritesheet.png')
 
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'Sound')
@@ -34,35 +39,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("DBZ")
 clock = pygame.time.Clock()
 
+vegeta_ss = spritesheet.SpriteSheet('img/vegeta/vegetaspritesheet.png')
+vegeta_super_ss = spritesheet.SpriteSheet('img/vegeta/ss_vegeta_spritesheet.png')
 
-class Rock(pygame.sprite.Sprite):
-    def __init__(self, img_rck):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = img_rck
-        self.image.set_colorkey(BLACK)
-        self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
-        # positon the rock at the bottom of the screen
-        self.rect.y = HEIGHT - self.rect.height
-
-        self.speedy = random.randrange(1, 5)
-        # self.rect.y = random.randrange(-100, -40)
-        self.speedy = random.randrange(1, 8)
-
-    def update(self):
-        # move the rock up the screen
-        self.rect.y -= self.speedy
-        # if the rock is off the top of the screen
-        if self.rect.bottom < 0:
-            # reset the rock to the bottom of the screen
-            self.rect.y = HEIGHT - self.rect.height
-            self.rect.x = random.randrange(0, WIDTH - self.rect.width)
-            self.speedy = random.randrange(1, 8)
-
-        # if self.rect.top > HEIGHT + 10:
-        #     self.rect.x = random.randrange(0, WIDTH - self.rect.width)
-        #     self.rect.y = random.randrange(-100, -40)
-        #     self.speedy = random.randrange(1, 8)
 
 
 # create a class for lightning bolt
@@ -155,12 +134,22 @@ lightning_img = pygame.image.load(path.join(img_dir, "lightning.png")).convert()
 rock_img = pygame.image.load(path.join(img_dir, "rock1.png")).convert()
 rock2_img = pygame.image.load(path.join(img_dir, "rock2.png")).convert()
 rock3_img = pygame.image.load(path.join(img_dir, "rock3.png")).convert()
-vegeta_ssj1 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj1.png")).convert()
-vegeta_ssj2 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj2.png")).convert()
-vegeta_ssj3 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj3.png")).convert()
-vegeta_ssj4 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj4.png")).convert()
-vegeta_ssj5 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj5.png")).convert()
-vegeta_ssj6 = pygame.image.load(path.join(vegeta_dir, "vegeta_ssj6.png")).convert()
+vegeta_tf1 = vegeta_ss.image_at((457, 1745, 89, 144))
+vegeta_tf2 = vegeta_ss.image_at((366, 1745, 89, 144))
+vegeta_tf3 = vegeta_ss.image_at((275, 1745, 89, 144))
+vegeta_tf4 = vegeta_ss.image_at((184, 1745, 89, 144))
+vegeta_tf5 = vegeta_ss.image_at((93, 1745, 89, 144))
+vegeta_tf6 = vegeta_ss.image_at((0, 1745, 89, 144))
+vegeta_tf7 = vegeta_ss.image_at((102, 7179, 98, 141))
+vegeta_tf8 = vegeta_ss.image_at((204, 7179, 98, 141))
+vegeta_tf9 = vegeta_ss.image_at((306, 7179, 98, 141))
+vegeta_tf10 = vegeta_ss.image_at((408, 7179, 98, 141))
+vegeta_tf11 = vegeta_ss.image_at((510, 7179, 98, 141))
+vegeta_tf12 = vegeta_ss.image_at((612, 7179, 98, 141))
+vegeta_tf13 = vegeta_ss.image_at((714, 7179, 98, 141))
+vegeta_tf14 = vegeta_ss.image_at((816, 7179, 98, 141))
+vegeta_tf15 = vegeta_super_ss.image_at((875, 8263, 80, 140))
+vegeta_ss_shoot = vegeta_ss.image_at((328, 5934, 102, 137))
 vegeta_bg = pygame.image.load(path.join(vegeta_dir, "vegeta_bg.png")).convert()
 goku_block = pygame.image.load(path.join(goku_dir, "goku_block.png")).convert()
 goku_dmg = pygame.image.load(path.join(goku_dir, "goku_dmg.png")).convert()
@@ -171,6 +160,8 @@ goku_fly_down = pygame.image.load(path.join(goku_dir, "goku_fly_down.png")).conv
 goku_ki = pygame.image.load(path.join(goku_dir, "goku_ki.png")).convert()
 goku_sp1 = pygame.image.load(path.join(goku_dir, "gokusp1.png")).convert()
 goku_sp2 = pygame.image.load(path.join(goku_dir, "gokusp2.png")).convert()
+
+vegeta_tfimgs = [vegeta_tf1,vegeta_tf10, vegeta_tf12,vegeta_tf13, vegeta_tf15]
 
 # Load all videos
 goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
@@ -191,12 +182,7 @@ IMAGES_G = {
     "FLYUP": goku_fly_up,
     "FLYDOWN": goku_fly_down,
     "BG": vegeta_bg,
-    "SP_1": vegeta_ssj1,
-    "SP_2": vegeta_ssj2,
-    "SP_3": vegeta_ssj3,
-    "SP_4": vegeta_ssj4,
-    "SP_5": vegeta_ssj5,
-    "SP_6": vegeta_ssj6,
+    "TF_IMGS": vegeta_tfimgs,
     "LIGHTNING": lightning_img,
     "ROCK": rock_images,
     "SP_ATTACK": KAMEHAMEHA_FIREBALLS,
@@ -218,12 +204,7 @@ IMAGES_P2 = {
     "SHOOT_IMG": vegeta_ki,
     "BLOCK": vegeta_block,
     "BG": vegeta_bg,
-    "SP_1": vegeta_ssj1,
-    "SP_2": vegeta_ssj2,
-    "SP_3": vegeta_ssj3,
-    "SP_4": vegeta_ssj4,
-    "SP_5": vegeta_ssj5,
-    "SP_6": vegeta_ssj6,
+    "TF_IMGS": vegeta_tfimgs,
     "LIGHTNING": lightning_img,
     "ROCK": rock_images,
     "SP_ATTACK": goku_sp1,
@@ -281,9 +262,12 @@ all_sprites.add(player2)
 
 # Game Loop
 running = True
+P1_TF = false
+P2_TF = false
 # start background music
 pygame.mixer.music.play(-1)
 while running:
+
     # keep loop running at the right speed
     clock.tick(FPS)
     player1.basic_health()
@@ -302,6 +286,7 @@ while running:
 
             if event.key == pygame.K_SPACE:
                 player1.shoot()
+
             # if the l key is held down, then block
             keys = pygame.key.get_pressed()
             if keys[pygame.K_l]:
@@ -314,7 +299,14 @@ while running:
             if not keys[pygame.K_r]:
                 player1.unblock()
             if event.key == pygame.K_p:
+                dim = Dimmer(keepalive=1)
+                dim.dim(darken_factor=64, color_filter=(0, 0, 0))
+                time.sleep(2)
                 player2.transform()
+                #TODO:
+                # call reset_player_ss() to set all sprites to next level
+
+                #while rockcount is less than 10, transform player
             if event.key == pygame.K_RETURN:
                 player2.shoot()
             if event.key == pygame.K_ESCAPE:

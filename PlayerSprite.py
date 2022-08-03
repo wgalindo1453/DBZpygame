@@ -5,6 +5,10 @@ import time
 from Attacks import Bullet, Special_Attack
 from moviepy.editor import *
 from os import path
+from spritesheet import SpriteSheet
+from dimmer import Dimmer
+from ObjectSprite import ObjectSprite2, Rock
+
 
 # this is a class for player sprite object.
 # IMAGES AND SOUNDS are dictionaries
@@ -37,14 +41,9 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.block_img = IMAGES["BLOCK"]
         self.bullet_img = IMAGES["BULLET_IMG"]
         self.transform_bg = IMAGES["BG"]
-        self.SP1_img = IMAGES["SP_1"]
-        self.SP2_img = IMAGES["SP_2"]
-        self.SP3_img = IMAGES["SP_3"]
-        self.SP4_img = IMAGES["SP_4"]
-        self.SP5_img = IMAGES["SP_5"]
-        self.SP6_img = IMAGES["SP_6"]
         self.SPattacks_img = IMAGES['SP_ATTACK']
         self.rock_imgs = IMAGES["ROCK"]
+        self.lightning_img = IMAGES["LIGHTNING"]
         self.image.set_colorkey(self.BLACK)  # black background
         self.rect = self.image.get_rect()
         self.rect.centerx = X_COR
@@ -68,6 +67,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.allsprGRP = GROUPS["ALL_SPRITES"]
         self.bulletGRP = GROUPS["BULLETS"]
         self.specialsGRP = GROUPS["SPECIALS"]
+        self.TFIMGS = IMAGES["TF_IMGS"]
 
     def get_damage(self, amount):
         # change image to vegeta_damage if he is not blocking
@@ -241,79 +241,150 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.blocking = False
         self.image = self.image
 
+
     # create a funtion to transform super saiyen into vegeta
     def transform(self):
-
+        lightningSprite1 = ObjectSprite2(self.width - 400, self.height, 1, self.lightning_img)
         self.trans_sound.play()
-        # make background  flicker while transforming
+        dim = Dimmer(keepalive=1)
+        dim.dim(darken_factor=64, color_filter=(0,0,0))
+        for i in range(0, 10):
+            self.screen.fill((0, 0, 0))
+            pygame.display.flip()
+            time.sleep(0.1)
+            self.screen.fill((100, 100, 100))
+            pygame.display.flip()
+            time.sleep(0.1)
+        #loop through TFIMGS LIST
         center_x = self.width / 2
         center_y = self.height / 2
-        # blit a black screen over the background to make it look like the background is fading out
-        self.screen.blit(self.transform_bg, (0, 0))
+        for img in self.TFIMGS:
+            randomX = random.randint(1, 1000)
+            img.set_colorkey(self.BLACK)
+            self.screen.set_colorkey((0, 0, 0))
+            self.screen.blit(self.transform_bg, (0, 0))
+            self.screen.blit(img, (center_x, center_y))
+            img.set_colorkey(self.BLACK)
+            self.screen.blit(lightningSprite1.image, (randomX, 0))
+            pygame.display.flip()  # flip screen 1
+            time.sleep(2)
+            for i in range(0, 10):
+                self.screen.fill((0, 0, 0))
+                pygame.display.flip()
+                time.sleep(0.1)
+                #fill gold color
+                self.screen.fill((255, 255, 0))
+                #invert the screen background image
+                self.screen.set_colorkey((0, 0, 0))
+                self.screen.blit(img, (center_x, center_y))
+                pygame.display.flip()
+                time.sleep(0.1)
+            self.screen.fill((0, 0, 0))
 
+        # blank_alpha = (0, 0, 0, 0)
+        # self.SP1_img.set_colorkey(self.BLACK)
+        # self.trans_sound.play()
+        # # make background  flicker while transforming
+        # center_x = self.width / 2
+        # center_y = self.height / 2
+        # # blit a black screen over the background to make it look like the background is fading out
+        # self.screen.blit(self.transform_bg, (0, 0))
+        #
         # for i in range(0, 10):
-        #     screen.fill(BLACK)
+        #     self.screen.fill((0, 0, 0))
         #     pygame.display.flip()
         #     time.sleep(0.1)
-        #     screen.fill(WHITE)
+        #     self.screen.fill((100, 100, 100))
         #     pygame.display.flip()
         #     time.sleep(0.1)
+        # dim=Dimmer(keepalive=1)
+        # dim.dim(darken_factor=64, color_filter=(0,0,0))
+        # self.screen.blit(self.SP1_img, (center_x, center_y))
+        # self.SP1_img.set_colorkey(self.BLACK)
+        # # flip the screen
+        # pygame.display.flip()
+        # self.screen.fill((0, 0, 0, 0))
+        # self.screen.blit(self.transform_bg, (0, 0))
+        # self.screen.blit(self.SP1_img, (center_x, center_y))
+        # #create Rock object and add to allsprGRP
+        # #grab random rock from rock_imgs list
+        #
+        #
+        # #blits rock to screen
+        # #create a group for rocks
+        # self.rocksGRP = pygame.sprite.Group()
+        #
+        # #show rocks on screen
+        # self.rocksGRP.draw(self.screen)
+        #
+        #
+        # # set lightning_bolt to be at top left of screen
+        # self.screen.blit(lightningSprite0.image, (0, 0))
+        # # update screen
+        # pygame.display.flip()
+        # # remove black background on image
+        # self.screen.set_colorkey(self.BLACK)
+        # # update screen
+        # pygame.display.flip()  # screen flip 0
+        # # self.image.set_alpha(50)  <-- sets image to 50% transparent
+        # time.sleep(2)
+        # self.screen.fill((0, 0, 0, 0))
+        # #create Rock sprite
+        # self.screen.blit(self.transform_bg, (0, 0))
+        #
+        #
+        # self.SP2_img.set_colorkey(self.BLACK)
+        # self.screen.blit(self.SP2_img, (center_x, center_y))
+        # self.screen.set_colorkey((0, 0, 0))
+        # self.screen.blit(lightningSprite1.image, (250, 0))
+        # pygame.display.flip()  # flip screen 1
+        # time.sleep(2)
+        # self.screen.fill((0, 0, 0, 0))
+        # self.screen.blit(self.transform_bg, (0, 0))
+        # self.SP3_img.set_colorkey(self.BLACK)
+        # self.screen.blit(self.SP3_img, (center_x, center_y))
+        # self.screen.set_colorkey((0, 0, 0))
+        # lightningSprite2.image.set_alpha(50)
+        # self.screen.blit(lightningSprite2.image, (250, 0))
+        # self.screen.blit(lightningSprite2.image, (450, 0))
+        # self.screen.set_colorkey(self.BLACK)
+        # pygame.display.flip()  # flip screen 0 and 2
+        # time.sleep(2)
+        # self.screen.fill((0, 0, 0, 0))
+        # self.screen.blit(self.transform_bg, (0, 0))
+        # self.SP4_img.set_colorkey(self.BLACK)
+        # self.screen.blit(self.SP4_img, (center_x, center_y))
+        # self.screen.set_colorkey((0, 0, 0))
+        # lightningSprite3.image.set_alpha(50)
+        # self.screen.blit(lightningSprite3.image, (460, 0))
+        # self.screen.blit(lightningSprite3.image, (800, 0))
+        # self.screen.set_colorkey(self.BLACK)
+        # pygame.display.flip()  # flip screen 0 and 3
+        # time.sleep(2)
+        # self.screen.fill((0, 0, 0, 0))
+        # self.screen.blit(self.transform_bg, (0, 0))
+        # self.SP5_img.set_colorkey(self.BLACK)
+        # self.screen.blit(self.SP5_img, (center_x, center_y))
+        # self.screen.set_colorkey((0, 0, 0))
+        # lightningSprite4.image.set_alpha(50)
+        # self.screen.blit(lightningSprite4.image, (460, 0))
+        # self.screen.blit(lightningSprite4.image, (800, 0))
+        # self.screen.set_colorkey(self.BLACK)
+        # pygame.display.flip()  # flip screen 0 and 4
+        # time.sleep(2)
+        # self.screen.fill((0, 0, 0, 0))
+        # self.screen.blit(self.transform_bg, (0, 0))
+        # self.SP6_img.set_colorkey(self.BLACK)
+        # self.screen.blit(self.SP6_img, (center_x, center_y))
+        # self.screen.set_colorkey((0, 0, 0))
+        # lightningSprite5.image.set_alpha(50)
+        # self.screen.blit(lightningSprite5.image, (160, 0))
+        # self.screen.blit(lightningSprite5.image, (500, 0))
+        # self.screen.set_colorkey(self.BLACK)
+        # pygame.display.flip()  # flip screen 0 and 5
+        # time.sleep(2)
 
-        # draw tj
-        # set background to black
-        self.screen.fill(self.BLACK)
 
-        # show vegeta transform image on flip
-        self.screen.blit(self.SP1_img, (center_x, center_y))
-        # remove black background on image
-        self.screen.set_colorkey(self.BLACK)
-        # create lightning_bolt
-
-        # draw lightning bolt on blits top center
-
-        # remove black background on image
-        self.screen.set_colorkey(self.BLACK)
-
-        # update screen
-        pygame.display.flip()
-        # self.image.set_alpha(50)  <-- sets image to 50% transparent
-        pygame.display.flip()
-        time.sleep(2)
-        self.screen.blit(self.SP2_img, (center_x, center_y))
-        self.screen.set_colorkey((0, 0, 0))
-        pygame.display.flip()
-        time.sleep(2)
-        self.screen.blit(self.SP2_img, (center_x, center_y))
-        self.screen.set_colorkey(self.BLACK)
-        pygame.display.flip()
-        time.sleep(2)
-        self.screen.blit(self.SP4_img, (center_x, center_y))
-        self.screen.set_colorkey(self.BLACK)
-        pygame.display.flip()
-        time.sleep(2)
-        self.screen.blit(self.SP5_img, (center_x, center_y))
-        self.screen.set_colorkey(self.BLACK)
-        pygame.display.flip()
-        time.sleep(2)
-        self.screen.blit(self.SP6_img, (center_x, center_y))
-        self.screen.set_colorkey(self.BLACK)
-        pygame.display.flip()
-        time.sleep(2)
-
-        # # draw lightning bolt
-        # lightning_bolt = Lightning_Bolt(self.width - 400, self.height, 1)
-        # self.allsprGRP.add(lightning_bolt)
-        # lightnings.add(lightning_bolt)
-
-        # change images to vegeta_ssj1 through vegeta_ssj6
-
-        # self.image = vegeta_transform1
-        # self.image.set_colorkey(BLACK)
-        # remove black background on image
-
-        # wait 2 seconds before creating bullet
-        time.sleep(2)
-        # play transform_sound
 
     def Special_Blast(self):
         #
