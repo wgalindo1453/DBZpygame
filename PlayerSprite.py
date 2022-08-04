@@ -5,10 +5,10 @@ import time
 from Attacks import Bullet, Special_Attack
 from moviepy.editor import *
 from os import path
-from spritesheet import SpriteSheet
+import spritesheet
 from dimmer import Dimmer
 from ObjectSprite import ObjectSprite2, Rock
-
+from PIL import Image, ImageChops
 
 # this is a class for player sprite object.
 # IMAGES AND SOUNDS are dictionaries
@@ -27,8 +27,9 @@ def play_music(music_file):
 class PlayerSpr(pygame.sprite.Sprite):
     BLACK = (0, 0, 0)
 
-    def __init__(self, PLAYER, SCREEN, HEIGHT, WIDTH, IMAGES, SOUNDS, VIDS, X_COR, Y_COR, GROUPS):
+    def __init__(self, PLAYER, CHAR_NAME, SCREEN, HEIGHT, WIDTH, IMAGES, SOUNDS, VIDS, X_COR, Y_COR, GROUPS):
         pygame.sprite.Sprite.__init__(self)
+        self.character_name = CHAR_NAME
         self.player = PLAYER
         self.base_img = IMAGES["BSE_IMG"]
         self.image = IMAGES["BSE_IMG"]
@@ -53,6 +54,9 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.target_health = 500
         self.maximum_health = 1000
         self.health_bar_length = 300
+        self.power_level_bar_length = 300
+        self.current_power_level = 200
+        self.maximum_power_level = 1000
         self.health_ratio = self.maximum_health / self.health_bar_length
         self.health_change_speed = 5
         self.blocking = False
@@ -68,6 +72,10 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.bulletGRP = GROUPS["BULLETS"]
         self.specialsGRP = GROUPS["SPECIALS"]
         self.TFIMGS = IMAGES["TF_IMGS"]
+        self.new_ss = IMAGES["TF_SS"]
+        self.isFlipped = False
+        if self.player == "Player1":
+            self.isFlipped = True
 
     def get_damage(self, amount):
         # change image to vegeta_damage if he is not blocking
@@ -100,14 +108,21 @@ class PlayerSpr(pygame.sprite.Sprite):
         # update screen
         pygame.display.flip()
 
+    def power_level_bar(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), (10, 10, self.current_health / self.health_ratio, 25))
+        pygame.draw.rect(self.screen, (255, 255, 255), (10, 10, self.health_bar_length, 25), 4)
+        pygame.display.flip()
+
     def update(self):
         self.advance_health()
-
+        self.power_bar()
         self.speedx = 0
         keystate = pygame.key.get_pressed()
         # if player is on the floor change image to base image
+        self.image.set_colorkey((0, 0, 0))
         if self.rect.bottom >= self.height:
             self.image = self.base_img
+            self.image.set_colorkey((0, 0, 0))
 
         if self.player == "Player1":
             keystate = pygame.key.get_pressed()
@@ -122,6 +137,7 @@ class PlayerSpr(pygame.sprite.Sprite):
                 self.fly_down()
             if keystate[pygame.K_r]:
                 self.block()
+
         elif self.player == "Player2":
             keystate = pygame.key.get_pressed()
             if keystate[pygame.K_LEFT]:
@@ -132,6 +148,7 @@ class PlayerSpr(pygame.sprite.Sprite):
                 self.fly_up()
             if keystate[pygame.K_DOWN]:
                 self.fly_down()
+
         self.rect.x += self.speedx
         if self.rect.right > self.width:
             self.rect.right = self.width
@@ -141,6 +158,18 @@ class PlayerSpr(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > self.height:
             self.rect.bottom = self.height
+
+    def advancepower(self):
+        if self.current_power_level < self.maximum_power_level:
+            self.current_power_level += self.health_change_speed
+        if self.current_power_level >= self.maximum_power_level:
+            self.current_power_level = self.maximum_power_level
+        self.power_level_bar()
+
+    def power_bar(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), (10, 10, self.current_power_level / self.maximum_power_level, 25))
+        pygame.draw.rect(self.screen, (255, 255, 255), (10, 10, self.power_level_bar_length, 25), 4)
+        pygame.display.flip()
 
     def advance_health(self):
         transition_width = 0
@@ -163,20 +192,34 @@ class PlayerSpr(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, (255, 255, 255), (10, 45, self.health_bar_length, 25), 4)
 
     def shoot(self):
+        self.shooting_img.set_colorkey((0, 0, 0))
         self.image = self.shooting_img
-        self.image.set_colorkey(self.BLACK)
+        self.image.set_colorkey((0, 0, 0))
         # play ki_sound
         self.ki_sound.play()
         # wait 2 seconds before creating bullet
-        if self.player == "Player1":
-            bullet = Bullet(self.rect.centerx, self.rect.top, 1, self.bullet_img)
 
-        elif self.player == "Player2":
-            bullet = Bullet(self.rect.centerx, self.rect.top, 2, self.bullet_img)
+        bullet = Bullet(self.rect.centerx, self.rect.top, self.isFlipped, self.bullet_img)
 
         self.allsprGRP.add(bullet)
         self.bulletGRP.add(bullet)
         # wait 1 second before returning to base image
+
+    def flip_images(self):
+
+        if self.isFlipped:
+            self.isFlipped = False
+        elif not self.isFlipped:
+            self.isFlipped = True
+
+        self.image = pygame.transform.flip(self.image, True, False)
+        self.shooting_img = pygame.transform.flip(self.shooting_img, True, False)
+        self.base_img = pygame.transform.flip(self.base_img, True, False)
+        self.block_img = pygame.transform.flip(self.block_img, True, False)
+        self.fly_fwd_img = pygame.transform.flip(self.fly_fwd_img, True, False)
+        self.fly_bck_img = pygame.transform.flip(self.fly_bck_img, True, False)
+        self.fly_up_img = pygame.transform.flip(self.fly_up_img, True, False)
+        self.fly_down_img = pygame.transform.flip(self.fly_down_img, True, False)
 
     # create a function to fly up
     def fly_up(self):
@@ -241,13 +284,13 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.blocking = False
         self.image = self.image
 
-
     # create a funtion to transform super saiyen into vegeta
     def transform(self):
         lightningSprite1 = ObjectSprite2(self.width - 400, self.height, 1, self.lightning_img)
-        self.trans_sound.play()
+
+
         dim = Dimmer(keepalive=1)
-        dim.dim(darken_factor=64, color_filter=(0,0,0))
+        dim.dim(darken_factor=64, color_filter=(0, 0, 0))
         for i in range(0, 10):
             self.screen.fill((0, 0, 0))
             pygame.display.flip()
@@ -255,13 +298,15 @@ class PlayerSpr(pygame.sprite.Sprite):
             self.screen.fill((100, 100, 100))
             pygame.display.flip()
             time.sleep(0.1)
-        #loop through TFIMGS LIST
+        # loop through TFIMGS LIST
         center_x = self.width / 2
         center_y = self.height / 2
+        self.trans_sound.play()
         for img in self.TFIMGS:
             randomX = random.randint(1, 1000)
             img.set_colorkey(self.BLACK)
             self.screen.set_colorkey((0, 0, 0))
+            self.screen.blit(self.transform_bg, (0, 0))
             self.screen.blit(self.transform_bg, (0, 0))
             self.screen.blit(img, (center_x, center_y))
             img.set_colorkey(self.BLACK)
@@ -272,13 +317,14 @@ class PlayerSpr(pygame.sprite.Sprite):
                 self.screen.fill((0, 0, 0))
                 pygame.display.flip()
                 time.sleep(0.1)
-                #fill gold color
+                # fill gold color
                 self.screen.fill((255, 255, 0))
-                #invert the screen background image
+                # invert the screen background image
                 self.screen.set_colorkey((0, 0, 0))
                 self.screen.blit(img, (center_x, center_y))
                 pygame.display.flip()
                 time.sleep(0.1)
+
             self.screen.fill((0, 0, 0))
 
         # blank_alpha = (0, 0, 0, 0)
@@ -384,7 +430,29 @@ class PlayerSpr(pygame.sprite.Sprite):
         # pygame.display.flip()  # flip screen 0 and 5
         # time.sleep(2)
 
+    # loading new sprite sheet to be used for character transformation
+    def reset_sprites(self, new_ss):
 
+        if self.character_name == "Vegeta":
+            self.base_img = new_ss.image_at((10, 2163, 83, 138))
+            self.image = new_ss.image_at((107, 498, 70, 141))
+            self.shooting_img = new_ss.image_at((450, 5935, 102, 136))
+            self.dmg_img = new_ss.image_at((192, 6091, 73, 129))
+            self.fly_up_img = new_ss.image_at((104, 1443, 62, 147))
+            self.fly_down_img = new_ss.image_at((451, 1451, 58, 139))
+            self.fly_bck_img = new_ss.image_at((10, 1879, 74, 118))
+            self.fly_fwd_img = new_ss.image_at((103, 1775, 120, 77))
+            self.block_img = new_ss.image_at((111, 1035, 81, 117))
+        elif self.character_name == "Goku":
+            self.base_img = new_ss.image_at((341,189,69,162))
+            self.image = new_ss.image_at((430,188,67,163))
+            self.shooting_img = new_ss.image_at((220,3808,102,144))
+            self.dmg_img = new_ss.image_at((10,6490,91,139))
+            self.fly_up_img = new_ss.image_at((129, 1144, 69, 154))
+            self.fly_down_img = new_ss.image_at((514, 1141, 60, 157))
+            self.fly_bck_img = new_ss.image_at((131, 1615, 106, 128))
+            self.fly_fwd_img = new_ss.image_at((120,1495,136,83))
+            self.block_img = new_ss.image_at((100, 976, 63, 141))
 
     def Special_Blast(self):
         #
