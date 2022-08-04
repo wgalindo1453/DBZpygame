@@ -108,7 +108,7 @@ def get_random_rock_img():
 # Load all game graphics
 background = pygame.image.load(path.join(img_dir, "namek.png")).convert()
 background_rect = background.get_rect()
-player1_img = pygame.image.load(path.join(goku_dir, "goku_base.png")).convert()
+player1_img = goku_ss.image_at((131,271,105,109))
 player2_img = pygame.image.load(path.join(vegeta_dir, "vegeta_normal.png")).convert()
 rain_img = pygame.image.load(path.join(img_dir, "rain.png")).convert()
 bullet_img = pygame.image.load(path.join(img_dir, "laserRed01.png")).convert()
@@ -128,6 +128,8 @@ vegeta_fly_down = vegeta_ss.image_at((459, 1094, 58, 140))
 vegeta_fwd = vegeta_ss.image_at((127, 1363, 120, 78))
 vegeta_fly_bk = vegeta_ss.image_at((89, 1478, 80, 113))
 vegeta_ki = vegeta_ss.image_at((437, 5222, 102, 136))
+
+
 vegeta_transform1 = vegeta_ss.image_at((14, 4782, 65, 114))
 vegeta_tf1 = vegeta_ss.image_at((457, 1745, 89, 144))
 vegeta_tf10 = vegeta_ss.image_at((408, 7179, 98, 141))
@@ -145,15 +147,20 @@ rock2_img = pygame.image.load(path.join(img_dir, "rock2.png")).convert()
 rock3_img = pygame.image.load(path.join(img_dir, "rock3.png")).convert()
 
 # GOKU IMAGES
-goku_block = pygame.image.load(path.join(goku_dir, "goku_block.png")).convert()
-goku_dmg = pygame.image.load(path.join(goku_dir, "goku_dmg.png")).convert()
-goku_fly_fwd = pygame.image.load(path.join(goku_dir, "goku_fly_fwd.png")).convert()
-goku_fly_bk = pygame.image.load(path.join(goku_dir, "goku_fly_back.png")).convert()
-goku_fly_up = pygame.image.load(path.join(goku_dir, "goku_fly_up.png")).convert()
-goku_fly_down = pygame.image.load(path.join(goku_dir, "goku_fly_down.png")).convert()
-goku_ki = pygame.image.load(path.join(goku_dir, "goku_ki.png")).convert()
-goku_sp1 = pygame.image.load(path.join(goku_dir, "gokusp1.png")).convert()
-goku_sp2 = pygame.image.load(path.join(goku_dir, "gokusp2.png")).convert()
+goku_fly_up = goku_ss.image_at((124,837,69,154))
+goku_fly_down = goku_ss.image_at((528,842,60,149))
+goku_fly_fwd = goku_ss.image_at((123,1184,143,78))
+goku_fly_bk = goku_ss.image_at((126,1300,106,114))
+goku_block = goku_ss.image_at((183,679,58,125))
+goku_dmg = goku_ss.image_at((0,6688,95,137))
+goku_ki =  goku_ss.image_at((220,3395,102,146))
+
+
+
+goku_sp1 = goku_ss.image_at((406,5759,111,108))
+goku_sp2 = goku_ss.image_at((272,5754,109,113))
+goku_sp3 = goku_ss.image_at((141,5746,106,121))
+goku_sp4 = goku_ss.image_at((0,5747,116,120))
 goku_tf1 = goku_super_ss.image_at((10, 40, 80, 129))
 goku_tf2 = goku_super_ss.image_at((100, 40, 87, 119))
 goku_tf3 = goku_super_ss.image_at((217, 31, 73, 138))
@@ -263,6 +270,8 @@ player1 = PlayerSpr("Player1", "Goku", screen, HEIGHT, WIDTH, IMAGES_G, GOKU_SOU
 player2 = PlayerSpr("Player2", "Vegeta", screen, HEIGHT, WIDTH, IMAGES_P2, VEGETA_SOUNDS, VIDEOS, WIDTH, HEIGHT, GROUPS)
 all_sprites.add(player1)
 all_sprites.add(player2)
+player1.flip_images()
+player1.set_isFlipped(True)
 
 # for i in range(8):
 #     enemy = Rain()
@@ -276,11 +285,14 @@ P2_TF = False
 # start background music
 pygame.mixer.music.play(-1)
 while running:
+    # keep player 1 facing right
+
 
     # keep loop running at the right speed
     clock.tick(FPS)
     player1.basic_health()
     player2.basic_health()
+    #flipimages(player1) only at the start of the game
 
     #    previous_time = pygame.time.get_ticks()
     # process input (events )
@@ -317,9 +329,10 @@ while running:
             if event.key == pygame.K_t:
                 player1.transform()
                 player1.reset_sprites(goku_super_ss)
+                player1.flip_images()
+                player1.set_isFlipped(True)
                 # if player 1 is on the left of player 2 then flipsprites
-                if player1.rect.x < player2.rect.x:
-                    player1.flip_images()
+
                 # TODO:
                 # call reset_player_ss() to set all sprites to next level
 

@@ -77,6 +77,9 @@ class PlayerSpr(pygame.sprite.Sprite):
         if self.player == "Player1":
             self.isFlipped = True
 
+    def set_isFlipped(self, isFlipped):
+        self.isFlipped = isFlipped
+
     def get_damage(self, amount):
         # change image to vegeta_damage if he is not blocking
         if self.blocking == False:
@@ -220,6 +223,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.fly_bck_img = pygame.transform.flip(self.fly_bck_img, True, False)
         self.fly_up_img = pygame.transform.flip(self.fly_up_img, True, False)
         self.fly_down_img = pygame.transform.flip(self.fly_down_img, True, False)
+        self.dmg_img = pygame.transform.flip(self.dmg_img, True, False)
 
     # create a function to fly up
     def fly_up(self):
@@ -288,7 +292,6 @@ class PlayerSpr(pygame.sprite.Sprite):
     def transform(self):
         lightningSprite1 = ObjectSprite2(self.width - 400, self.height, 1, self.lightning_img)
 
-
         dim = Dimmer(keepalive=1)
         dim.dim(darken_factor=64, color_filter=(0, 0, 0))
         for i in range(0, 10):
@@ -327,108 +330,7 @@ class PlayerSpr(pygame.sprite.Sprite):
 
             self.screen.fill((0, 0, 0))
 
-        # blank_alpha = (0, 0, 0, 0)
-        # self.SP1_img.set_colorkey(self.BLACK)
-        # self.trans_sound.play()
-        # # make background  flicker while transforming
-        # center_x = self.width / 2
-        # center_y = self.height / 2
-        # # blit a black screen over the background to make it look like the background is fading out
-        # self.screen.blit(self.transform_bg, (0, 0))
-        #
-        # for i in range(0, 10):
-        #     self.screen.fill((0, 0, 0))
-        #     pygame.display.flip()
-        #     time.sleep(0.1)
-        #     self.screen.fill((100, 100, 100))
-        #     pygame.display.flip()
-        #     time.sleep(0.1)
-        # dim=Dimmer(keepalive=1)
-        # dim.dim(darken_factor=64, color_filter=(0,0,0))
-        # self.screen.blit(self.SP1_img, (center_x, center_y))
-        # self.SP1_img.set_colorkey(self.BLACK)
-        # # flip the screen
-        # pygame.display.flip()
-        # self.screen.fill((0, 0, 0, 0))
-        # self.screen.blit(self.transform_bg, (0, 0))
-        # self.screen.blit(self.SP1_img, (center_x, center_y))
-        # #create Rock object and add to allsprGRP
-        # #grab random rock from rock_imgs list
-        #
-        #
-        # #blits rock to screen
-        # #create a group for rocks
-        # self.rocksGRP = pygame.sprite.Group()
-        #
-        # #show rocks on screen
-        # self.rocksGRP.draw(self.screen)
-        #
-        #
-        # # set lightning_bolt to be at top left of screen
-        # self.screen.blit(lightningSprite0.image, (0, 0))
-        # # update screen
-        # pygame.display.flip()
-        # # remove black background on image
-        # self.screen.set_colorkey(self.BLACK)
-        # # update screen
-        # pygame.display.flip()  # screen flip 0
-        # # self.image.set_alpha(50)  <-- sets image to 50% transparent
-        # time.sleep(2)
-        # self.screen.fill((0, 0, 0, 0))
-        # #create Rock sprite
-        # self.screen.blit(self.transform_bg, (0, 0))
-        #
-        #
-        # self.SP2_img.set_colorkey(self.BLACK)
-        # self.screen.blit(self.SP2_img, (center_x, center_y))
-        # self.screen.set_colorkey((0, 0, 0))
-        # self.screen.blit(lightningSprite1.image, (250, 0))
-        # pygame.display.flip()  # flip screen 1
-        # time.sleep(2)
-        # self.screen.fill((0, 0, 0, 0))
-        # self.screen.blit(self.transform_bg, (0, 0))
-        # self.SP3_img.set_colorkey(self.BLACK)
-        # self.screen.blit(self.SP3_img, (center_x, center_y))
-        # self.screen.set_colorkey((0, 0, 0))
-        # lightningSprite2.image.set_alpha(50)
-        # self.screen.blit(lightningSprite2.image, (250, 0))
-        # self.screen.blit(lightningSprite2.image, (450, 0))
-        # self.screen.set_colorkey(self.BLACK)
-        # pygame.display.flip()  # flip screen 0 and 2
-        # time.sleep(2)
-        # self.screen.fill((0, 0, 0, 0))
-        # self.screen.blit(self.transform_bg, (0, 0))
-        # self.SP4_img.set_colorkey(self.BLACK)
-        # self.screen.blit(self.SP4_img, (center_x, center_y))
-        # self.screen.set_colorkey((0, 0, 0))
-        # lightningSprite3.image.set_alpha(50)
-        # self.screen.blit(lightningSprite3.image, (460, 0))
-        # self.screen.blit(lightningSprite3.image, (800, 0))
-        # self.screen.set_colorkey(self.BLACK)
-        # pygame.display.flip()  # flip screen 0 and 3
-        # time.sleep(2)
-        # self.screen.fill((0, 0, 0, 0))
-        # self.screen.blit(self.transform_bg, (0, 0))
-        # self.SP5_img.set_colorkey(self.BLACK)
-        # self.screen.blit(self.SP5_img, (center_x, center_y))
-        # self.screen.set_colorkey((0, 0, 0))
-        # lightningSprite4.image.set_alpha(50)
-        # self.screen.blit(lightningSprite4.image, (460, 0))
-        # self.screen.blit(lightningSprite4.image, (800, 0))
-        # self.screen.set_colorkey(self.BLACK)
-        # pygame.display.flip()  # flip screen 0 and 4
-        # time.sleep(2)
-        # self.screen.fill((0, 0, 0, 0))
-        # self.screen.blit(self.transform_bg, (0, 0))
-        # self.SP6_img.set_colorkey(self.BLACK)
-        # self.screen.blit(self.SP6_img, (center_x, center_y))
-        # self.screen.set_colorkey((0, 0, 0))
-        # lightningSprite5.image.set_alpha(50)
-        # self.screen.blit(lightningSprite5.image, (160, 0))
-        # self.screen.blit(lightningSprite5.image, (500, 0))
-        # self.screen.set_colorkey(self.BLACK)
-        # pygame.display.flip()  # flip screen 0 and 5
-        # time.sleep(2)
+
 
     # loading new sprite sheet to be used for character transformation
     def reset_sprites(self, new_ss):
@@ -444,14 +346,14 @@ class PlayerSpr(pygame.sprite.Sprite):
             self.fly_fwd_img = new_ss.image_at((103, 1775, 120, 77))
             self.block_img = new_ss.image_at((111, 1035, 81, 117))
         elif self.character_name == "Goku":
-            self.base_img = new_ss.image_at((341,189,69,162))
-            self.image = new_ss.image_at((430,188,67,163))
-            self.shooting_img = new_ss.image_at((220,3808,102,144))
-            self.dmg_img = new_ss.image_at((10,6490,91,139))
+            self.base_img = new_ss.image_at((341, 189, 69, 162))
+            self.image = new_ss.image_at((430, 188, 67, 163))
+            self.shooting_img = new_ss.image_at((220, 3808, 102, 144))
+            self.dmg_img = new_ss.image_at((10, 6490, 91, 139))
             self.fly_up_img = new_ss.image_at((129, 1144, 69, 154))
             self.fly_down_img = new_ss.image_at((514, 1141, 60, 157))
             self.fly_bck_img = new_ss.image_at((131, 1615, 106, 128))
-            self.fly_fwd_img = new_ss.image_at((120,1495,136,83))
+            self.fly_fwd_img = new_ss.image_at((120, 1495, 136, 83))
             self.block_img = new_ss.image_at((100, 976, 63, 141))
 
     def Special_Blast(self):
