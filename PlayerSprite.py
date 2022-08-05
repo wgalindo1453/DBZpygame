@@ -17,11 +17,24 @@ from PIL import Image, ImageChops
 # from mainDBZ import Lightning_Bolt, lightnings
 
 path = "Sound/jump.mp3"
+channel0 = pygame.mixer.Channel(0)
+channel1 = pygame.mixer.Channel(1)
+channel2 = pygame.mixer.Channel(2)
+channel3 = pygame.mixer.Channel(3)
+channel0.set_volume(0.5)
+channel1.set_volume(0.5)
+channel2.set_volume(0.5)
+channel3.set_volume(0.5)
 
 
 def play_music(music_file):
     pygame.mixer.music.load(music_file)
     pygame.mixer.music.play()
+
+
+# movie = pygame.movie.Movie('MELT.MPG')
+# screen = pygame.display.set_mode(movie.get_size())
+# movie_screen = pygame.Surface(movie.get_size()).convert()
 
 
 class PlayerSpr(pygame.sprite.Sprite):
@@ -51,14 +64,17 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.rect.bottom = Y_COR - 10
         self.speedx = 0
         self.current_health = 200
+        self.current_power = 200
         self.target_health = 500
-        self.maximum_health = 1000
+        self.target_power = 500
         self.health_bar_length = 300
         self.power_level_bar_length = 300
-        self.current_power_level = 200
-        self.maximum_power_level = 1000
+        self.maximum_power = 1000
+        self.maximum_health = 1000
         self.health_ratio = self.maximum_health / self.health_bar_length
+        self.power_ratio = self.maximum_power / self.power_level_bar_length
         self.health_change_speed = 5
+        self.power_change_speed = 5
         self.blocking = False
         self.screen = SCREEN
         self.height = HEIGHT
@@ -73,6 +89,10 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.specialsGRP = GROUPS["SPECIALS"]
         self.TFIMGS = IMAGES["TF_IMGS"]
         self.new_ss = IMAGES["TF_SS"]
+        self.death_imgs = IMAGES["DEATH_IMGS"]
+        self.death_snd = SOUNDS["DEATH_SND"]
+        self.trans_vid = VIDS["TRANS_VID"]
+        self.death_count = 0
         self.isFlipped = False
         if self.player == "Player1":
             self.isFlipped = True
@@ -101,6 +121,16 @@ class PlayerSpr(pygame.sprite.Sprite):
         if self.target_health >= self.maximum_health:
             self.target_health = self.maximum_health
 
+    def power_bar(self):
+        if self.player == "Player1":
+            pygame.draw.rect(self.screen, (255, 0, 0),(10, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (255, 255, 255), (10, 40, self.power_level_bar_length, 25), 4)
+        elif self.player == "Player2":
+            pygame.draw.rect(self.screen, (255, 0, 0),(700, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (255, 255, 255), (700, 40, self.power_level_bar_length, 25), 4)
+
+        pygame.display.flip()
+
     def basic_health(self):
         if self.player == "Player1":
             pygame.draw.rect(self.screen, (255, 0, 0), (10, 10, self.target_health / self.health_ratio, 25))
@@ -111,14 +141,9 @@ class PlayerSpr(pygame.sprite.Sprite):
         # update screen
         pygame.display.flip()
 
-    def power_level_bar(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), (10, 10, self.current_health / self.health_ratio, 25))
-        pygame.draw.rect(self.screen, (255, 255, 255), (10, 10, self.health_bar_length, 25), 4)
-        pygame.display.flip()
-
     def update(self):
         self.advance_health()
-        self.power_bar()
+        self.advance_power()
         self.speedx = 0
         keystate = pygame.key.get_pressed()
         # if player is on the floor change image to base image
@@ -162,18 +187,6 @@ class PlayerSpr(pygame.sprite.Sprite):
         if self.rect.bottom > self.height:
             self.rect.bottom = self.height
 
-    def advancepower(self):
-        if self.current_power_level < self.maximum_power_level:
-            self.current_power_level += self.health_change_speed
-        if self.current_power_level >= self.maximum_power_level:
-            self.current_power_level = self.maximum_power_level
-        self.power_level_bar()
-
-    def power_bar(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), (10, 10, self.current_power_level / self.maximum_power_level, 25))
-        pygame.draw.rect(self.screen, (255, 255, 255), (10, 10, self.power_level_bar_length, 25), 4)
-        pygame.display.flip()
-
     def advance_health(self):
         transition_width = 0
         transition_color = (255, 0, 0)
@@ -193,6 +206,26 @@ class PlayerSpr(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, (255, 0, 0), health_bar_rect)
         pygame.draw.rect(self.screen, transition_color, transition_bar_rect)
         pygame.draw.rect(self.screen, (255, 255, 255), (10, 45, self.health_bar_length, 25), 4)
+
+    def advance_power(self):
+        transition_width = 0
+        transition_color = (255, 0, 0)
+
+        if self.current_power < self.target_power:
+            self.current_power += self.power_change_speed
+            transition_width = int((self.target_power - self.current_power) / self.power_ratio)
+            transition_color = (0, 255, 0)
+        if self.current_power < self.target_power:
+            self.current_power -= self.power_change_speed
+            transition_width = int((self.target_power - self.current_power) / self.power_ratio)
+            transition_color = (255, 255, 0)
+
+        power_bar_rect = pygame.Rect(10, 45, self.current_power / self.power_ratio, 25)
+        transition_bar_rect = pygame.Rect(power_bar_rect.right, 45, transition_width, 25)
+
+        pygame.draw.rect(self.screen, (255, 0, 0), power_bar_rect)
+        pygame.draw.rect(self.screen, transition_color, transition_bar_rect)
+        pygame.draw.rect(self.screen, (255, 255, 255), (10, 45, self.power_level_bar_length, 25), 4)
 
     def shoot(self):
         self.shooting_img.set_colorkey((0, 0, 0))
@@ -288,12 +321,21 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.blocking = False
         self.image = self.image
 
+    def vidPlayer(self, screen):
+        self.vid_player.play()
+        self.vid_player.set_display(screen)
+
+    def videoClipPlayer(self, vid):
+        vid.preview()
+
     # create a funtion to transform super saiyen into vegeta
     def transform(self):
         lightningSprite1 = ObjectSprite2(self.width - 400, self.height, 1, self.lightning_img)
 
         dim = Dimmer(keepalive=1)
         dim.dim(darken_factor=64, color_filter=(0, 0, 0))
+        # self.videoClipPlayer(self.trans_vid)
+
         for i in range(0, 10):
             self.screen.fill((0, 0, 0))
             pygame.display.flip()
@@ -304,8 +346,13 @@ class PlayerSpr(pygame.sprite.Sprite):
         # loop through TFIMGS LIST
         center_x = self.width / 2
         center_y = self.height / 2
-        self.trans_sound.play()
+        channel1.play(self.trans_sound[0])
+        count = 0
+        # check if any sounds playi
         for img in self.TFIMGS:
+            if channel1.get_busy() != True and count < 1:
+                channel1.play(self.trans_sound[1])
+                count = count + 1
             randomX = random.randint(1, 1000)
             img.set_colorkey(self.BLACK)
             self.screen.set_colorkey((0, 0, 0))
@@ -330,8 +377,6 @@ class PlayerSpr(pygame.sprite.Sprite):
 
             self.screen.fill((0, 0, 0))
 
-
-
     # loading new sprite sheet to be used for character transformation
     def reset_sprites(self, new_ss):
 
@@ -355,6 +400,18 @@ class PlayerSpr(pygame.sprite.Sprite):
             self.fly_bck_img = new_ss.image_at((131, 1615, 106, 128))
             self.fly_fwd_img = new_ss.image_at((120, 1495, 136, 83))
             self.block_img = new_ss.image_at((100, 976, 63, 141))
+
+    def death(self):
+        self.death_snd.play()
+        # loop through death images
+        for img in self.death_imgs:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(img, (self.width / 2, self.height / 2))
+            pygame.display.flip()
+            time.sleep(0.1)
+        # wait 3 seconds
+        time.sleep(3)
+        # play death sound
 
     def Special_Blast(self):
         #

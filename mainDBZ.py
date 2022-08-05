@@ -18,7 +18,7 @@ mus_dir = path.join(path.dirname(__file__), 'Music')
 vegeta_dir = path.join(img_dir, 'vegeta')
 # create goku_dir under img_dir
 goku_dir = path.join(img_dir, 'goku')
-WIDTH = 1000
+WIDTH = 1200
 HEIGHT = 800
 FPS = 80
 
@@ -108,7 +108,7 @@ def get_random_rock_img():
 # Load all game graphics
 background = pygame.image.load(path.join(img_dir, "namek.png")).convert()
 background_rect = background.get_rect()
-player1_img = goku_ss.image_at((131,271,105,109))
+player1_img = goku_ss.image_at((131, 271, 105, 109))
 player2_img = pygame.image.load(path.join(vegeta_dir, "vegeta_normal.png")).convert()
 rain_img = pygame.image.load(path.join(img_dir, "rain.png")).convert()
 bullet_img = pygame.image.load(path.join(img_dir, "laserRed01.png")).convert()
@@ -129,7 +129,6 @@ vegeta_fwd = vegeta_ss.image_at((127, 1363, 120, 78))
 vegeta_fly_bk = vegeta_ss.image_at((89, 1478, 80, 113))
 vegeta_ki = vegeta_ss.image_at((437, 5222, 102, 136))
 
-
 vegeta_transform1 = vegeta_ss.image_at((14, 4782, 65, 114))
 vegeta_tf1 = vegeta_ss.image_at((457, 1745, 89, 144))
 vegeta_tf10 = vegeta_ss.image_at((408, 7179, 98, 141))
@@ -138,6 +137,12 @@ vegeta_tf13 = vegeta_ss.image_at((714, 7179, 98, 141))
 vegeta_tf15 = vegeta_super_ss.image_at((875, 8263, 80, 140))
 vegeta_tf_rects = [vegeta_tf1, vegeta_tf10, vegeta_tf12, vegeta_tf13, vegeta_tf15]
 vegeta_ss_shoot = vegeta_ss.image_at((328, 5934, 102, 137))
+vegeta_death1 = vegeta_ss.image_at((6, 6850, 97, 69))
+vegeta_death2 = vegeta_ss.image_at((107, 6817, 74, 112))
+vegeta_death3 = vegeta_ss.image_at((11, 6956, 131, 66))
+vegeta_death4 = vegeta_ss.image_at((138, 6952, 88, 61))
+vegeta_death5 = vegeta_ss.image_at((313, 6983, 129, 47))
+vegeta_death_imgs = [vegeta_death1, vegeta_death2, vegeta_death3, vegeta_death4, vegeta_death5]
 
 goku_bg = pygame.image.load(path.join(img_dir, "namek_bg_night.jpg")).convert()
 vegeta_bg = pygame.image.load(path.join(vegeta_dir, "vegeta_bg.png")).convert()
@@ -147,34 +152,49 @@ rock2_img = pygame.image.load(path.join(img_dir, "rock2.png")).convert()
 rock3_img = pygame.image.load(path.join(img_dir, "rock3.png")).convert()
 
 # GOKU IMAGES
-goku_fly_up = goku_ss.image_at((124,837,69,154))
-goku_fly_down = goku_ss.image_at((528,842,60,149))
-goku_fly_fwd = goku_ss.image_at((123,1184,143,78))
-goku_fly_bk = goku_ss.image_at((126,1300,106,114))
-goku_block = goku_ss.image_at((183,679,58,125))
-goku_dmg = goku_ss.image_at((0,6688,95,137))
-goku_ki =  goku_ss.image_at((220,3395,102,146))
+goku_fly_up = goku_ss.image_at((124, 837, 69, 154))
+goku_fly_down = goku_ss.image_at((528, 842, 60, 149))
+goku_fly_fwd = goku_ss.image_at((123, 1184, 143, 78))
+goku_fly_bk = goku_ss.image_at((126, 1300, 106, 114))
+goku_block = goku_ss.image_at((183, 679, 58, 125))
+goku_dmg = goku_ss.image_at((0, 6688, 95, 137))
+goku_ki = goku_ss.image_at((220, 3395, 102, 146))
 
+goku_banner = goku_ss.image_at((868, 8815, 512, 64))
+goku_splash = goku_ss.image_at((1124, 8883, 256, 256))
+goku_tf1_kioten = goku_ss.image_at((1266, 8689, 105, 107))
+goku_tf2_kioten = goku_ss.image_at((1136, 8689, 105, 107))
+goku_tf3_kioten = goku_ss.image_at((1006, 8689, 105, 107))
+goku_rush_kioten = goku_ss.image_at((1398, 8872, 136, 244))
 
-
-goku_sp1 = goku_ss.image_at((406,5759,111,108))
-goku_sp2 = goku_ss.image_at((272,5754,109,113))
-goku_sp3 = goku_ss.image_at((141,5746,106,121))
-goku_sp4 = goku_ss.image_at((0,5747,116,120))
+goku_sp1 = goku_ss.image_at((406, 5759, 111, 108))
+goku_sp2 = goku_ss.image_at((272, 5754, 109, 113))
+goku_sp3 = goku_ss.image_at((141, 5746, 106, 121))
+goku_sp4 = goku_ss.image_at((0, 5747, 116, 120))
 goku_tf1 = goku_super_ss.image_at((10, 40, 80, 129))
 goku_tf2 = goku_super_ss.image_at((100, 40, 87, 119))
 goku_tf3 = goku_super_ss.image_at((217, 31, 73, 138))
 goku_tf4 = goku_super_ss.image_at((310, 18, 92, 151))
 goku_tf5 = goku_super_ss.image_at((422, 18, 92, 151))
-goku_tf_rects = [ goku_tf3, goku_tf4, goku_tf5]
-
+goku_tf_rects = [goku_tf3, goku_tf4, goku_tf5]
+goku_death1 = goku_ss.image_at((0, 7699, 117, 80))
+goku_death2 = goku_ss.image_at((142, 7656, 92, 123))
+goku_death3 = goku_ss.image_at((0, 7835, 138, 65))
+goku_death4 = goku_ss.image_at((163, 7828, 118, 72))
+goku_death5 = goku_ss.image_at((306, 7853, 151, 47))
+goku_death_imgs = [goku_death1, goku_death2, goku_death3, goku_death4, goku_death5]
 vegeta_tfimgs = [vegeta_tf1, vegeta_tf10, vegeta_tf12, vegeta_tf13, vegeta_tf15]
 
 # Load all videos
 goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
+vegeta_SP_MP4 = VideoFileClip(vid_dir + '/vegeta_trans.mp4')
+vegeta_video = VideoFileClip(vid_dir + '/vegeta.mp4')
+
 
 # create a dictionary of VIDEOS
-VIDEOS = {'gokuSP': goku_SP_MP4}
+G_VIDEOS = {'TRANS_VID': goku_SP_MP4}
+V_VIDEOS = {'TRANS_VID': vegeta_video}
+
 rock_images = [rock_img, rock2_img, rock3_img]
 # create a dictionary of IMAGES for goku
 IMAGES_G = {
@@ -194,6 +214,7 @@ IMAGES_G = {
     "LIGHTNING": lightning_img,
     "ROCK": rock_images,
     "SP_ATTACK": KAMEHAMEHA_FIREBALLS,
+    "DEATH_IMGS": goku_death_imgs,
 
 }
 
@@ -217,36 +238,48 @@ IMAGES_P2 = {
     "LIGHTNING": lightning_img,
     "ROCK": rock_images,
     "SP_ATTACK": goku_sp1,
+    "DEATH_IMGS": vegeta_death_imgs,
 
 }
 # create a dictionary for VIDS
 
-
-# Load all videos
 
 # Load all game sounds
 kamehameha_sound = pygame.mixer.Sound(path.join(snd_dir, 'kamehameha.mp3'))
 ki_sound = pygame.mixer.Sound(path.join(snd_dir, 'ki_blast3.mp3'))
 landing_sound = pygame.mixer.Sound(path.join(snd_dir, 'landing.mp3'))
 vegeta_trans_sound = pygame.mixer.Sound(path.join(snd_dir, 'vegeta_transform.mp3'))
+vegeta_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Vegeta/trans.wav'))
+vegeta_trans_sound2 = pygame.mixer.Sound(path.join(snd_dir, 'Vegeta/trans2.wav'))
+
+vegeta_trans_sounds = [vegeta_trans_sound1, vegeta_trans_sound2]
+
 flying_sound = pygame.mixer.music.load(path.join(snd_dir, "jump.mp3"))
 goku_trans_sound = pygame.mixer.Sound(path.join(snd_dir, 'gokuyelling.mp3'))
-# load background music
+vegeta_death_sound = pygame.mixer.Sound(path.join(snd_dir, "Vegeta/death.wav"))
+goku_death_sound = pygame.mixer.Sound(path.join(snd_dir, "Goku/death.wav"))
+goku_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Goku/trans.wav'))
+goku_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Goku/trans2.wav'))
+# Set total mixer channels to 4
+goku_trans_sounds = [goku_trans_sound1,goku_trans_sound1]
+
 bg_music = pygame.mixer.music.load(path.join(mus_dir, "bgmusic.mp3"))
 
 VEGETA_SOUNDS = {
     "KI": ki_sound,
     "LNDSND": landing_sound,
-    "TSND": vegeta_trans_sound,
+    "TSND": vegeta_trans_sounds,
     "FLYSND": flying_sound,
     "SPSND": kamehameha_sound,
+    "DEATH_SND": vegeta_death_sound,
 }
 GOKU_SOUNDS = {
     "KI": ki_sound,
     "LNDSND": landing_sound,
-    "TSND": goku_trans_sound,
+    "TSND": goku_trans_sounds,
     "FLYSND": flying_sound,
     "SPSND": kamehameha_sound,
+    "DEATH_SND": goku_death_sound,
 }
 # create all groups
 
@@ -265,9 +298,11 @@ GROUPS = {
 }
 
 # add
-player1 = PlayerSpr("Player1", "Goku", screen, HEIGHT, WIDTH, IMAGES_G, GOKU_SOUNDS, VIDEOS, WIDTH - 1000, HEIGHT, GROUPS)
+player1 = PlayerSpr("Player1", "Goku", screen, HEIGHT, WIDTH, IMAGES_G, GOKU_SOUNDS, G_VIDEOS, WIDTH - 1000, HEIGHT,
+                    GROUPS)
 
-player2 = PlayerSpr("Player2", "Vegeta", screen, HEIGHT, WIDTH, IMAGES_P2, VEGETA_SOUNDS, VIDEOS, WIDTH, HEIGHT, GROUPS)
+player2 = PlayerSpr("Player2", "Vegeta", screen, HEIGHT, WIDTH, IMAGES_P2, VEGETA_SOUNDS, V_VIDEOS, WIDTH, HEIGHT,
+                    GROUPS)
 all_sprites.add(player1)
 all_sprites.add(player2)
 player1.flip_images()
@@ -282,17 +317,18 @@ player1.set_isFlipped(True)
 running = True
 P1_TF = False
 P2_TF = False
-# start background music
+
 pygame.mixer.music.play(-1)
 while running:
     # keep player 1 facing right
-
 
     # keep loop running at the right speed
     clock.tick(FPS)
     player1.basic_health()
     player2.basic_health()
-    #flipimages(player1) only at the start of the game
+    player1.power_bar()
+    player2.power_bar()
+    # flipimages(player1) only at the start of the game
 
     #    previous_time = pygame.time.get_ticks()
     # process input (events )
@@ -373,6 +409,11 @@ while running:
         player1.kill()
         print("Player 1  has died")
     if player2.target_health == 0:
+        # only call death one time
+        if player2.death_count == 0:
+            player2.death()
+            player2.death_count += 1
+            print("Player 2 has died")
         player2.kill()
         print("Player 2 has died")
     if hits:
