@@ -16,12 +16,12 @@ from PIL import Image, ImageChops
 # SOUNDS = { "KI" : ki_sound,...
 # from mainDBZ import Lightning_Bolt, lightnings
 
-path = "Sound/jump.mp3"
-channel0 = pygame.mixer.Channel(0)
+
+vid_dir = path.join(path.dirname(__file__), 'vid')
 channel1 = pygame.mixer.Channel(1)
 channel2 = pygame.mixer.Channel(2)
 channel3 = pygame.mixer.Channel(3)
-channel0.set_volume(0.5)
+
 channel1.set_volume(0.5)
 channel2.set_volume(0.5)
 channel3.set_volume(0.5)
@@ -42,6 +42,7 @@ class PlayerSpr(pygame.sprite.Sprite):
 
     def __init__(self, PLAYER, CHAR_NAME, SCREEN, HEIGHT, WIDTH, IMAGES, SOUNDS, VIDS, X_COR, Y_COR, GROUPS):
         pygame.sprite.Sprite.__init__(self)
+        self.deflecting = False
         self.character_name = CHAR_NAME
         self.player = PLAYER
         self.base_img = IMAGES["BSE_IMG"]
@@ -58,6 +59,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.SPattacks_img = IMAGES['SP_ATTACK']
         self.rock_imgs = IMAGES["ROCK"]
         self.lightning_img = IMAGES["LIGHTNING"]
+        self.player_attack_imgs = IMAGES["PLAYER_ATTACK_IMGS"]
         self.image.set_colorkey(self.BLACK)  # black background
         self.rect = self.image.get_rect()
         self.rect.centerx = X_COR
@@ -123,10 +125,10 @@ class PlayerSpr(pygame.sprite.Sprite):
 
     def power_bar(self):
         if self.player == "Player1":
-            pygame.draw.rect(self.screen, (255, 0, 0),(10, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (255, 0, 0), (10, 40, self.current_power / self.maximum_power, 25))
             pygame.draw.rect(self.screen, (255, 255, 255), (10, 40, self.power_level_bar_length, 25), 4)
         elif self.player == "Player2":
-            pygame.draw.rect(self.screen, (255, 0, 0),(700, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (255, 0, 0), (700, 40, self.current_power / self.maximum_power, 25))
             pygame.draw.rect(self.screen, (255, 255, 255), (700, 40, self.power_level_bar_length, 25), 4)
 
         pygame.display.flip()
@@ -241,6 +243,13 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.bulletGRP.add(bullet)
         # wait 1 second before returning to base image
 
+    # def deflect(self):quit
+    #     self.deflecting = True
+    #     self.image = self.deflect_img
+    #     self.image.set_colorkey((0, 0, 0))
+    #     self.deflect_sound.play()
+    #     self.deflect_timer = time.time()
+
     def flip_images(self):
 
         if self.isFlipped:
@@ -257,6 +266,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.fly_up_img = pygame.transform.flip(self.fly_up_img, True, False)
         self.fly_down_img = pygame.transform.flip(self.fly_down_img, True, False)
         self.dmg_img = pygame.transform.flip(self.dmg_img, True, False)
+        self.player_attack_imgs = [pygame.transform.flip(img, True, False) for img in self.player_attack_imgs]
 
     # create a function to fly up
     def fly_up(self):
@@ -414,21 +424,50 @@ class PlayerSpr(pygame.sprite.Sprite):
         # play death sound
 
     def Special_Blast(self):
+
+
+        if self.character_name == "Vegeta":
+            pygame.display.flip()
+            time.sleep(0.1)
+            sp_attack = Special_Attack(self.rect.centerx, self.rect.midright, 1, self.SPattacks_img, self.player_attack_imgs, self.special_sound)
+            self.allsprGRP.add(sp_attack)
+            self.specialsGRP.add(sp_attack)
+        elif self.character_name == "Goku":
+            # time.sleep(5)
+            # goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
+            # goku_SP_MP4.preview()
+            self.special_sound.play()
+            for i in range(len(self.player_attack_imgs)):
+                self.screen.fill((0, 0, 0))
+
+                self.image = self.player_attack_imgs[i]
+                self.image.set_colorkey((0, 0, 0))
+                self.screen.blit(self.image, (self.rect.x, self.rect.y))
+                pygame.display.flip()
+                time.sleep(0.6)
+
+
+            sp_attack = Special_Attack(self.rect.centerx, self.rect.centery, 1, self.SPattacks_img,self.player_attack_imgs, self.special_sound)
+
+            self.allsprGRP.add(sp_attack)
+            self.specialsGRP.add(sp_attack)
         #
         # dim the screen
 
-        # time.sleep(5)
-        # play goku_SP_MP4
-        # goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
-        # goku_SP_MP4.preview()
+
         # set screen to original size
 
         # time.sleep(5)
         # wait 30 seconds before playing the sound again
 
-        sp_attack = Special_Attack(self.rect.centerx, self.rect.midright, 1, self.SPattacks_img, self.special_sound)
 
-        self.allsprGRP.add(sp_attack)
-        self.specialsGRP.add(sp_attack)
+
+
+    def Special_Blast2(self):
+        if self.character_name == "Goku":
+            # dim the screen
+            dim = Dimmer(keepalive=1)
+            dim.dim(darken_factor=64, color_filter=(0, 0, 0))
+            #
 
 # create a function that plays music files

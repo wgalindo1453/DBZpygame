@@ -41,6 +41,111 @@ vegeta_ss = spritesheet.SpriteSheet('img/vegeta/vegetaspritesheet.png')
 vegeta_super_ss = spritesheet.SpriteSheet('img/vegeta/ss_vegeta_spritesheet.png')
 goku_ss = spritesheet.SpriteSheet('img/goku/gokuspritesheet.png')
 goku_super_ss = spritesheet.SpriteSheet('img/goku/ss_goku_spritesheet.png')
+channel0 = pygame.mixer.Channel(0)
+game_state = 0
+
+
+def show_splashscreen():
+    """
+    Show the splash screen.
+    This is called once when the game is first started.
+    """
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    splash_sound = pygame.mixer.Sound('Sound/takeeverythingback.mp3')
+    channel0.play(splash_sound)
+    pygame.mixer.music.set_volume(0.5)
+    white = 250, 250, 250
+    screen.fill(white)
+    # Slowly fade the splash screen image from white to opaque.
+    splash = pygame.image.load("img/splash.jpg").convert()
+    for i in range(25):
+        splash.set_alpha(i)
+        screen.blit(splash, (90, 50))
+        pygame.display.update()
+        pygame.time.wait(100)
+
+    pygame.mixer.fadeout(2000)
+    screen.blit(splash, (90, 50))
+    pygame.display.update()
+    pygame.time.wait(1500)
+    game_state = 0
+
+    channel0.stop()
+
+
+def open_menu():
+    s0Option = range(5)
+    is0 = 0
+    game_state = 0
+    """
+    Main Menu
+    """
+    background_openning = pygame.image.load("img/splash.jpg").convert()
+    black = 0, 0, 0
+    screen.fill(black)
+    screen.blit(background_openning, (-70, 0))
+    my_font = pygame.font.SysFont("monospace", 65)
+    bold_font = pygame.font.SysFont("monospace", 75, bold=True)
+    player_vs_pc = my_font.render("Play Vs PC", 1, WHITE)
+    player_vs_player = my_font.render("Play Vs Player2", 1, WHITE)
+    options_word = my_font.render("Options", 1, WHITE)
+    credits_word = my_font.render("Credits", 1, WHITE)
+    quit_word = my_font.render("Quit", 1, WHITE)
+
+    if s0Option[is0] == 0:
+        player_vs_pc = bold_font.render("Play Vs Pc", 1, WHITE)
+    if s0Option[is0] == 1:
+        player_vs_player = bold_font.render("Play Vs Player2", 1, WHITE)
+    if s0Option[is0] == 2:
+        options_word = bold_font.render("Options", 1, WHITE)
+    if s0Option[is0] == 3:
+        credits_word = bold_font.render("Credits", 1, WHITE)
+    if s0Option[is0] == 4:
+        quit_word = bold_font.render("Quit", 1, WHITE)
+
+    screen.blit(player_vs_pc, (310, 250))
+    screen.blit(player_vs_player, (310, 320))
+    screen.blit(options_word, (310, 390))
+    screen.blit(credits_word, (310, 460))
+    screen.blit(quit_word, (310, 530))
+    pygame.display.update()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                game_state = previous_game_state
+            if event.key == pygame.K_RETURN:
+                if s0Option[is0] == 0:
+                    player2.player_id = 2
+                    game_state = 5
+                    vs_pc = True
+                    restart()
+                if s0Option[is0] == 1:
+                    game_state = 5
+                    restart()
+                    vs_pc = False
+                    player2.player_id = 2
+                if s0Option[is0] == 2:
+                    previous_game_state = 0
+                    game_state = 3
+                if s0Option[is0] == 3:
+                    previous_game_state = 0
+                    game_state = 6
+                if s0Option[is0] == 4:
+                    pygame.quit()
+                    sys.exit()
+            if event.key == pygame.K_DOWN:
+                if s0Option[is0] < s0Option[-1]:
+                    is0 += 1
+            if event.key == pygame.K_UP:
+                if s0Option[is0] > s0Option[0]:
+                    is0 -= 1
 
 
 # create a class for lightning bolt
@@ -113,13 +218,6 @@ player2_img = pygame.image.load(path.join(vegeta_dir, "vegeta_normal.png")).conv
 rain_img = pygame.image.load(path.join(img_dir, "rain.png")).convert()
 bullet_img = pygame.image.load(path.join(img_dir, "laserRed01.png")).convert()
 
-kamehameha_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball.png")).convert()
-kamehameha2_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball2.png")).convert()
-kamehameha3_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball3.png")).convert()
-kamehameha4_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball4.png")).convert()
-kamehameha5_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball5.png")).convert()
-
-KAMEHAMEHA_FIREBALLS = [kamehameha_img, kamehameha2_img, kamehameha3_img, kamehameha4_img, kamehameha5_img]
 # VEGETA IMAGES
 vegeta_fly_up = vegeta_ss.image_at((111, 1092, 62, 148))
 vegeta_block = vegeta_ss.image_at((173, 965, 81, 102))
@@ -143,13 +241,20 @@ vegeta_death3 = vegeta_ss.image_at((11, 6956, 131, 66))
 vegeta_death4 = vegeta_ss.image_at((138, 6952, 88, 61))
 vegeta_death5 = vegeta_ss.image_at((313, 6983, 129, 47))
 vegeta_death_imgs = [vegeta_death1, vegeta_death2, vegeta_death3, vegeta_death4, vegeta_death5]
-
+vegeta_tfimgs = [vegeta_tf1, vegeta_tf10, vegeta_tf12, vegeta_tf13, vegeta_tf15]
 goku_bg = pygame.image.load(path.join(img_dir, "namek_bg_night.jpg")).convert()
 vegeta_bg = pygame.image.load(path.join(vegeta_dir, "vegeta_bg.png")).convert()
 lightning_img = pygame.image.load(path.join(img_dir, "lightning.png")).convert()
 rock_img = pygame.image.load(path.join(img_dir, "rock1.png")).convert()
 rock2_img = pygame.image.load(path.join(img_dir, "rock2.png")).convert()
 rock3_img = pygame.image.load(path.join(img_dir, "rock3.png")).convert()
+vegeta_bba_img1 = vegeta_ss.image_at((23, 4336, 65, 134))
+vegeta_bba_img2 = vegeta_ss.image_at((144, 4339, 105, 131))
+vegeta_bba_img3 = vegeta_ss.image_at((276, 4343, 98, 126))
+vegeta_bba_img4 = vegeta_ss.image_at((388, 4336, 102, 131))
+vegeta_bba_img5 = vegeta_ss.image_at((519, 4342, 69, 129))
+vegeta_bba_img6 = vegeta_ss.image_at((1256, 4340, 80, 129))
+vegeta_bba_imgs = [vegeta_bba_img1, vegeta_bba_img2, vegeta_bba_img3, vegeta_bba_img4, vegeta_bba_img5, vegeta_bba_img6]
 
 # GOKU IMAGES
 goku_fly_up = goku_ss.image_at((124, 837, 69, 154))
@@ -183,13 +288,26 @@ goku_death3 = goku_ss.image_at((0, 7835, 138, 65))
 goku_death4 = goku_ss.image_at((163, 7828, 118, 72))
 goku_death5 = goku_ss.image_at((306, 7853, 151, 47))
 goku_death_imgs = [goku_death1, goku_death2, goku_death3, goku_death4, goku_death5]
-vegeta_tfimgs = [vegeta_tf1, vegeta_tf10, vegeta_tf12, vegeta_tf13, vegeta_tf15]
+kamehameha_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball.png")).convert()
+kamehameha2_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball2.png")).convert()
+kamehameha3_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball3.png")).convert()
+kamehameha4_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball4.png")).convert()
+kamehameha5_img = pygame.image.load(path.join(goku_dir, "kamehamehafireball5.png")).convert()
+
+goku_kmhma1_img = goku_ss.image_at((680, 5758, 113, 109))
+goku_kmhma2_img = goku_ss.image_at((542, 5762, 113, 105))
+goku_kmhma3_img = goku_ss.image_at((406, 5759, 111, 108))
+goku_kmhma4_img = goku_ss.image_at((272, 5754, 109, 113))
+goku_kmhma5_img = goku_ss.image_at((141, 5746, 106, 121))
+goku_kmhma6_img = goku_ss.image_at((0, 5747, 116, 120))
+
+goku_kmhma_imgs = [goku_kmhma1_img, goku_kmhma2_img, goku_kmhma3_img, goku_kmhma4_img, goku_kmhma5_img, goku_kmhma6_img]
+KAMEHAMEHA_FIREBALLS = [kamehameha_img, kamehameha2_img, kamehameha3_img, kamehameha4_img, kamehameha5_img]
 
 # Load all videos
 goku_SP_MP4 = VideoFileClip(vid_dir + '/gokuSP.mp4')
 vegeta_SP_MP4 = VideoFileClip(vid_dir + '/vegeta_trans.mp4')
 vegeta_video = VideoFileClip(vid_dir + '/vegeta.mp4')
-
 
 # create a dictionary of VIDEOS
 G_VIDEOS = {'TRANS_VID': goku_SP_MP4}
@@ -199,6 +317,7 @@ rock_images = [rock_img, rock2_img, rock3_img]
 # create a dictionary of IMAGES for goku
 IMAGES_G = {
     "BSE_IMG": player1_img,
+    "PLAYER_ATTACK_IMGS": goku_kmhma_imgs,
     "KAMEHAMEHA": kamehameha_img,
     "BULLET_IMG": bullet_img,
     "SHOOT_IMG": goku_ki,
@@ -224,6 +343,7 @@ IMAGES_G = {
 IMAGES_P2 = {
     "BSE_IMG": player2_img,
     "rain": rain_img,
+    "PLAYER_ATTACK_IMGS": vegeta_bba_imgs,
     "BULLET_IMG": bullet_img,
     "FLYUP": vegeta_fly_up,
     "FLYBACK": vegeta_fly_bk,
@@ -261,7 +381,7 @@ goku_death_sound = pygame.mixer.Sound(path.join(snd_dir, "Goku/death.wav"))
 goku_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Goku/trans.wav'))
 goku_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Goku/trans2.wav'))
 # Set total mixer channels to 4
-goku_trans_sounds = [goku_trans_sound1,goku_trans_sound1]
+goku_trans_sounds = [goku_trans_sound1, goku_trans_sound1]
 
 bg_music = pygame.mixer.music.load(path.join(mus_dir, "bgmusic.mp3"))
 
@@ -307,6 +427,8 @@ all_sprites.add(player1)
 all_sprites.add(player2)
 player1.flip_images()
 player1.set_isFlipped(True)
+show_splashscreen()
+open_menu()
 
 # for i in range(8):
 #     enemy = Rain()
@@ -319,7 +441,9 @@ P1_TF = False
 P2_TF = False
 
 pygame.mixer.music.play(-1)
+
 while running:
+
     # keep player 1 facing right
 
     # keep loop running at the right speed
@@ -407,15 +531,15 @@ while running:
     hits = pygame.sprite.spritecollide(player1, bullets, False)
     if player1.target_health == 0:
         player1.kill()
-        print("Player 1  has died")
+
     if player2.target_health == 0:
         # only call death one time
         if player2.death_count == 0:
             player2.death()
             player2.death_count += 1
-            print("Player 2 has died")
+
         player2.kill()
-        print("Player 2 has died")
+
     if hits:
         if player1.blocking:
             player1.block()
