@@ -9,6 +9,8 @@ import spritesheet
 from moviepy.editor import *
 from os import path
 from ObjectSprite import Rock
+#import Special_Attack
+from Attacks import Special_Attack
 
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'Sound')
@@ -256,6 +258,7 @@ vegeta_bba_img5 = vegeta_ss.image_at((519, 4342, 69, 129))
 vegeta_bba_img6 = vegeta_ss.image_at((1256, 4340, 80, 129))
 vegeta_bba_imgs = [vegeta_bba_img1, vegeta_bba_img2, vegeta_bba_img3, vegeta_bba_img4, vegeta_bba_img5, vegeta_bba_img6]
 
+
 # GOKU IMAGES
 goku_fly_up = goku_ss.image_at((124, 837, 69, 154))
 goku_fly_down = goku_ss.image_at((528, 842, 60, 149))
@@ -357,14 +360,17 @@ IMAGES_P2 = {
     "TF_SS": vegeta_super_ss,
     "LIGHTNING": lightning_img,
     "ROCK": rock_images,
-    "SP_ATTACK": goku_sp1,
+    "SP_ATTACK": KAMEHAMEHA_FIREBALLS,
     "DEATH_IMGS": vegeta_death_imgs,
 
 }
-# create a dictionary for VIDS
+
 
 
 # Load all game sounds
+teleport_sound = pygame.mixer.Sound(path.join(snd_dir, "teleport.wav"))
+
+
 kamehameha_sound = pygame.mixer.Sound(path.join(snd_dir, 'kamehameha.mp3'))
 ki_sound = pygame.mixer.Sound(path.join(snd_dir, 'ki_blast3.mp3'))
 landing_sound = pygame.mixer.Sound(path.join(snd_dir, 'landing.mp3'))
@@ -373,6 +379,7 @@ vegeta_trans_sound1 = pygame.mixer.Sound(path.join(snd_dir, 'Vegeta/trans.wav'))
 vegeta_trans_sound2 = pygame.mixer.Sound(path.join(snd_dir, 'Vegeta/trans2.wav'))
 
 vegeta_trans_sounds = [vegeta_trans_sound1, vegeta_trans_sound2]
+vegeta_gg_snd = pygame.mixer.Sound(path.join(snd_dir, "Vegeta/gallitgun.wav"))
 
 flying_sound = pygame.mixer.music.load(path.join(snd_dir, "jump.mp3"))
 goku_trans_sound = pygame.mixer.Sound(path.join(snd_dir, 'gokuyelling.mp3'))
@@ -390,8 +397,9 @@ VEGETA_SOUNDS = {
     "LNDSND": landing_sound,
     "TSND": vegeta_trans_sounds,
     "FLYSND": flying_sound,
-    "SPSND": kamehameha_sound,
+    "SPSND": vegeta_gg_snd,
     "DEATH_SND": vegeta_death_sound,
+    "TELEPORT_SND": teleport_sound,
 }
 GOKU_SOUNDS = {
     "KI": ki_sound,
@@ -400,6 +408,7 @@ GOKU_SOUNDS = {
     "FLYSND": flying_sound,
     "SPSND": kamehameha_sound,
     "DEATH_SND": goku_death_sound,
+    "TELEPORT_SND": teleport_sound,
 }
 # create all groups
 
@@ -408,6 +417,7 @@ all_sprites = pygame.sprite.Group()
 rocks = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 kamehamehas = pygame.sprite.Group()
+vegeta_attacks = pygame.sprite.Group()
 lightnings = pygame.sprite.Group()
 
 GROUPS = {
@@ -448,10 +458,11 @@ while running:
 
     # keep loop running at the right speed
     clock.tick(FPS)
-    player1.basic_health()
-    player2.basic_health()
     player1.power_bar()
     player2.power_bar()
+    player1.basic_health()
+    player2.basic_health()
+
     # flipimages(player1) only at the start of the game
 
     #    previous_time = pygame.time.get_ticks()
@@ -464,6 +475,9 @@ while running:
             # if the k key is pressed, then kamehameha blast
             if event.key == pygame.K_k:
                 player1.Special_Blast()
+            #if the i key is pressed , then vegeta Special_Blast
+            elif event.key == pygame.K_i:
+                player2.Special_Blast()
 
             if event.key == pygame.K_SPACE:
                 player1.shoot()
@@ -486,17 +500,15 @@ while running:
                 player2.transform()
                 player2.reset_sprites(vegeta_super_ss)
             # if t is pressed, then transform
-            if event.key == pygame.K_t:
+            if event.key == pygame.K_e:
                 player1.transform()
                 player1.reset_sprites(goku_super_ss)
                 player1.flip_images()
                 player1.set_isFlipped(True)
-                # if player 1 is on the left of player 2 then flipsprites
-
-                # TODO:
-                # call reset_player_ss() to set all sprites to next level
-
-                # while rockcount is less than 10, transform player
+            if event.key == pygame.K_o:
+               player2.teleport()
+            if event.key == pygame.K_t:
+                player1.teleport()
             if event.key == pygame.K_RETURN:
                 player2.shoot()
             if event.key == pygame.K_ESCAPE:
@@ -529,6 +541,7 @@ while running:
 
     # check to see if a enemy hit the player
     hits = pygame.sprite.spritecollide(player1, bullets, False)
+    special_hits = pygame.sprite.spritecollide(player1, kamehamehas, False)
     if player1.target_health == 0:
         player1.kill()
 
@@ -539,12 +552,32 @@ while running:
             player2.death_count += 1
 
         player2.kill()
+    if special_hits:
+        if player1.blocking:
+            player1.block()
+
+
+        else:
+            player1.get_damage(20)
+            player1.get_power(3)
+    special_hits2 = pygame.sprite.spritecollide(player2, kamehamehas, False)
+    if special_hits2:
+        if player2.blocking:
+            player2.block()
+
+        else:
+            player2.get_damage(20)
+            player2.get_power(3)
+
 
     if hits:
         if player1.blocking:
             player1.block()
+
+
         else:
             player1.get_damage(5)
+            player1.get_power(3)
 
     hits2 = pygame.sprite.spritecollide(player2, bullets, False)
     if hits2:

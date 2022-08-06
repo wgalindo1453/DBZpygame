@@ -42,6 +42,7 @@ class Special_Attack(pygame.sprite.Sprite):
         self.snd = sp_snd
         self.sp_img = sp_IMG
         self.player_imgs = player_imgs
+
         # pygame.mixer.set_num_channels(8)
         # time.sleep(3)
         # screen = pygame.display.set_mode((1000, 800))
@@ -55,9 +56,13 @@ class Special_Attack(pygame.sprite.Sprite):
 
         # self.holdPosition(x, y)
 
+
         if player_type == 1:
             self.speedx = +10
         else:
+
+
+
             self.speedx = -10
 
     def playSound(self):
@@ -68,6 +73,9 @@ class Special_Attack(pygame.sprite.Sprite):
         self.rect.centerx = x
 
     def update(self):
+        #if it touches opponent, kill it
+
+
 
         self.rect.x += self.speedx
         # kill if it moves off the top of the screen

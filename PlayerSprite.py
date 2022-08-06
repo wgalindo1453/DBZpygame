@@ -94,6 +94,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.death_imgs = IMAGES["DEATH_IMGS"]
         self.death_snd = SOUNDS["DEATH_SND"]
         self.trans_vid = VIDS["TRANS_VID"]
+        self.teleport_snd = SOUNDS["TELEPORT_SND"]
         self.death_count = 0
         self.isFlipped = False
         if self.player == "Player1":
@@ -117,6 +118,15 @@ class PlayerSpr(pygame.sprite.Sprite):
             return False
         return True
 
+    def get_power(self, amount):
+        print("power: " + str(self.target_power))
+        if self.target_power > 0:
+            self.target_power -= amount
+        if self.target_power <= 0:
+            self.target_power = 0
+            return False
+        return True
+
     def get_health(self, amount):
         if self.target_health > self.maximum_health:
             self.target_health -= amount
@@ -125,13 +135,14 @@ class PlayerSpr(pygame.sprite.Sprite):
 
     def power_bar(self):
         if self.player == "Player1":
-            pygame.draw.rect(self.screen, (255, 0, 0), (10, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (0, 255, 0), (40 ,40, self.current_power / self.maximum_power, 25))
             pygame.draw.rect(self.screen, (255, 255, 255), (10, 40, self.power_level_bar_length, 25), 4)
         elif self.player == "Player2":
-            pygame.draw.rect(self.screen, (255, 0, 0), (700, 40, self.current_power / self.maximum_power, 25))
+            pygame.draw.rect(self.screen, (0, 255, 0), (700, 40, self.current_power / self.maximum_power, 25))
             pygame.draw.rect(self.screen, (255, 255, 255), (700, 40, self.power_level_bar_length, 25), 4)
 
         pygame.display.flip()
+
 
     def basic_health(self):
         if self.player == "Player1":
@@ -144,7 +155,7 @@ class PlayerSpr(pygame.sprite.Sprite):
         pygame.display.flip()
 
     def update(self):
-        self.advance_health()
+        # self.advance_health()
         self.advance_power()
         self.speedx = 0
         keystate = pygame.key.get_pressed()
@@ -167,6 +178,8 @@ class PlayerSpr(pygame.sprite.Sprite):
                 self.fly_down()
             if keystate[pygame.K_r]:
                 self.block()
+            # if keystate[pygame.K_t]:
+            #     self.teleport()
 
         elif self.player == "Player2":
             keystate = pygame.key.get_pressed()
@@ -178,6 +191,9 @@ class PlayerSpr(pygame.sprite.Sprite):
                 self.fly_up()
             if keystate[pygame.K_DOWN]:
                 self.fly_down()
+            #if o key is pressed, teleport
+            # if keystate[pygame.K_o]:
+            #     self.teleport()
 
         self.rect.x += self.speedx
         if self.rect.right > self.width:
@@ -267,6 +283,8 @@ class PlayerSpr(pygame.sprite.Sprite):
         self.fly_down_img = pygame.transform.flip(self.fly_down_img, True, False)
         self.dmg_img = pygame.transform.flip(self.dmg_img, True, False)
         self.player_attack_imgs = [pygame.transform.flip(img, True, False) for img in self.player_attack_imgs]
+        self.SPattacks_img = [pygame.transform.flip(img, True, False) for img in self.SPattacks_img]
+
 
     # create a function to fly up
     def fly_up(self):
@@ -423,13 +441,33 @@ class PlayerSpr(pygame.sprite.Sprite):
         time.sleep(3)
         # play death sound
 
+    def teleport(self):
+        #teleport player to random location
+        #fade player out
+        #fade player in
+        #play teleport sound
+        self.teleport_snd.play()
+        #create effect
+
+        self.rect.x = random.randint(0, self.width)
+        self.rect.y = random.randint(0, self.height)
+
+
+
     def Special_Blast(self):
 
 
         if self.character_name == "Vegeta":
-            pygame.display.flip()
-            time.sleep(0.1)
-            sp_attack = Special_Attack(self.rect.centerx, self.rect.midright, 1, self.SPattacks_img, self.player_attack_imgs, self.special_sound)
+            self.special_sound.play()
+            for i in range(len(self.player_attack_imgs)):
+                self.screen.fill((0, 0, 0))
+
+                self.image = self.player_attack_imgs[i]
+                self.image.set_colorkey((0, 0, 0))
+                self.screen.blit(self.image, (self.rect.x, self.rect.y))
+                pygame.display.flip()
+                time.sleep(0.6)
+            sp_attack = Special_Attack(self.rect.centerx, self.rect.centery, 2, self.SPattacks_img, self.player_attack_imgs, self.special_sound)
             self.allsprGRP.add(sp_attack)
             self.specialsGRP.add(sp_attack)
         elif self.character_name == "Goku":
